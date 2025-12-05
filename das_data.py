@@ -1,10 +1,21 @@
 import requests
 
-url="https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=price_change_percentage_24h_desc&per_page=10&page=1&sparkline=false"
+url = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=high_volume_desc&per_page=32&page=1&sparkline=false"
 response=requests.get(url)
+#naredu da mava ta znane pa vazne coine (usaj zame lolz)
+populars = ['bitcoin', 'ethereum', 'ripple',
+            'binancecoin', 'solana', 'tron',
+            'dogecoin', 'cardano','chainlink','avalanche-2']
+
 if response.status_code!=200:
     print("Call limit exceeded!")
-data=response.json()
+
+data = []
+curr_price = []
+for coin in response.json():
+    if coin['id'] in populars:
+        data.append(coin)
+
 
 def get_prices(coin_id):
     """
@@ -18,3 +29,5 @@ def get_prices(coin_id):
         raise Exception("Unable to get data now.Try again!")
     data = response.json()
     return data["prices"]
+
+
