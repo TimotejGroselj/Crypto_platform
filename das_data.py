@@ -7,5 +7,14 @@ if response.status_code!=200:
     print("Call limit exceeded!")
 data=response.json()
 
-
-
+def get_prices(coin_id):
+    """
+    
+    """
+    url=f"https://api.coingecko.com/api/v3/coins/{coin_id}/market_chart?vs_currency=usd&days=364"
+    response=requests.get(url)
+    if response.status_code==200:
+        print("Gathering data...")
+    else:
+        raise Exception("Unable to get data now.Try again!")
+    return response["prices"]
