@@ -1,5 +1,4 @@
 import requests
-import time
 
 url="https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=price_change_percentage_24h_desc&per_page=10&page=1&sparkline=false"
 response=requests.get(url)
@@ -17,4 +16,5 @@ def get_prices(coin_id):
         print("Gathering data...")
     else:
         raise Exception("Unable to get data now.Try again!")
-    return response["prices"]
+    data = response.json()
+    return data["prices"]

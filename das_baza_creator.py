@@ -29,20 +29,18 @@ with connection:
     cur.execute(query)
     coin_ids = cur.fetchall()
     print(coin_ids)
-    '''
     for coin_id in coin_ids:
-        time.sleep(15)
         print("Working please wait...")
-        coin_prices = get_prices(coin_id)
-        query = """
-        DROP TABLE IF EXISTS 
-        ?;
-        CREATE TABLE ? (
+        query = "DROP TABLE IF EXISTS " + coin_id[0]+";CREATE TABLE "+coin_id[0]+"""(
         price integer,
         date text
         );
         """
-        cur.execute(query, (coin_id,coin_id))
+        print(query)
+        cur.executescript(query)
+        '''
+        time.sleep(15)
+        coin_prices = get_prices(coin_id[0])
         for price,date in coin_prices:
             date = datetime.fromtimestamp(date)
             date = date.strftime('%Y-%m-%d %H:%M:%S')
@@ -51,7 +49,7 @@ with connection:
             (price,date)
             VALUES(?,?)
             """
-            cur.execute(query,(coin_id,price,date))
+            cur.execute(query,(coin_id[0],price,date))
         '''
         
 
