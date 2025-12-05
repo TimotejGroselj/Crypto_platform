@@ -32,19 +32,15 @@ with connection:
     except sql.IntegrityError as error: #če pride do tega (seprau mas ze kovance not) updati sam trenutn dan price od coinov
         print(f"This coin already exists in coins: {error}")
         print("Checking today's price")
-        """
-        DANASNJI PRICUS SE PA BO
         today = datetime.today().strftime('%Y-%m-%d')
-        check = cur.execute("SELECT * FROM coins_prices WHERE date = ?",[today]).fetchall()
-        if check:
-            print("Price already updated!")
-        else:
-            print("Inserting today's price...")
-            names = cur.execute("SELECT coin_id FROM coins").fetchall()
-            for id in names:
+        try:
+            for info in data:
+                curr_price = info['current_price']
+                name = info['id']
                 command = "INSERT INTO coins_prices (coin_id, date, price) VALUES (?,?,?);"
-                cur.execute(command,[id[0],today,price])
-        """
+                cur.execute(command,[name,today,curr_price])
+        except sql.IntegrityError as error:
+            print(f"Coin has already been updated today: {error}")
 
 
 zapisi = cur.execute("SELECT coin_id FROM coins").fetchall() #Test da so res zrihtani

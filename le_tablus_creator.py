@@ -15,9 +15,10 @@ command = """
         );
         DROP TABLE IF EXISTS coins_prices;
         CREATE TABLE coins_prices (
-          coin_id varchar(15) PRIMARY KEY,
+          coin_id varchar(15),
           date date,
-          price numeric(15,6)
+          price numeric(15,6),
+          PRIMARY KEY (coin_id, date)
         );
         """
 with conn:
