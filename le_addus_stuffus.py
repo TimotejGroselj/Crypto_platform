@@ -31,7 +31,6 @@ with connection:
         print('$' * length + ' Loading complete!')
     except sql.IntegrityError as error: #če pride do tega (seprau mas ze kovance not) updati sam trenutn dan price od coinov
         print(f"This coin already exists in coins: {error}")
-        """
         print("Checking today's price")
         today = datetime.today().strftime('%Y-%m-%d')
         try:
@@ -42,7 +41,7 @@ with connection:
                 cur.execute(command,[name,today,curr_price])
         except sql.IntegrityError as error:
             print(f"Coin has already been updated today: {error}")
-        """
+
 
 
 gc = cur.execute("SELECT * FROM coins_prices WHERE coin_id = 'ethereum'").fetchall()
