@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 import time
 
 
@@ -10,6 +10,10 @@ for i in range(len(divisors)):
     except ZeroDivisionError:
         divisors[i] = 0
 print(divisors)
+
+k = datetime.fromtimestamp(1733616000000/1000).strftime("%Y-%m-%d")
+print(k)
+
 
 d = len(divisors)
 i = 0

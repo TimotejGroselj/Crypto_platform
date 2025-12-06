@@ -17,20 +17,21 @@ with connection:
         print("Inserting prices...")
         length = len(table_ids)
         start = 0
-        print(f'Do not abort the process -> grab a coffee :)')
+        print(f'Do not abort the process (cca 2.5 minutes) -> grab a coffee :)')
         for coin in table_ids: #date,price za 364 dni nazaj
             time.sleep(15)
             elstrong = f'Progress: {str(10 * start)}%' #progress bar da se nous ukenju :)
             print("$" * start + "-" * (length - start) + ' ' + elstrong)
             dateprice = get_prices(coin)
             for date,price in dateprice:
-                date = datetime.fromtimestamp(date/1000)
+                date = datetime.fromtimestamp(date/1000).strftime("%Y-%m-%d")
                 command = "INSERT INTO coins_prices (coin_id, date, price) VALUES (?,?,?);"
                 cur.execute(command,[coin,date,price])
             start += 1
         print('$' * length + ' Loading complete!')
     except sql.IntegrityError as error: #če pride do tega (seprau mas ze kovance not) updati sam trenutn dan price od coinov
         print(f"This coin already exists in coins: {error}")
+        """
         print("Checking today's price")
         today = datetime.today().strftime('%Y-%m-%d')
         try:
@@ -41,16 +42,10 @@ with connection:
                 cur.execute(command,[name,today,curr_price])
         except sql.IntegrityError as error:
             print(f"Coin has already been updated today: {error}")
+        """
 
 
-zapisi = cur.execute("SELECT coin_id FROM coins").fetchall() #Test da so res zrihtani
-print(zapisi)
-for d in zapisi:
-    print(d)
+gc = cur.execute("SELECT * FROM coins_prices WHERE coin_id = 'ethereum'").fetchall()
+for row in gc:
+    print(row)
 
-
-pogoj = cur.execute("SELECT * FROM coins WHERE coin_id = ?",['bitcoin']).fetchall()
-if pogoj:
-    print('Date exists!')
-else:
-    print('Date doesn\'t exist!')

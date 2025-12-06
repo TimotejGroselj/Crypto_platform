@@ -16,8 +16,8 @@ command = """
         DROP TABLE IF EXISTS coins_prices;
         CREATE TABLE coins_prices (
           coin_id varchar(15),
-          date date,
-          price numeric(15,6),
+          date date NOT NULL,
+          price numeric(15,6) NOT NULL,
           PRIMARY KEY (coin_id, date)
         );
         """
@@ -26,5 +26,5 @@ with conn:
     try:
         cursor.executescript(command)
         print("Successfully created coins table!")
-    except:
-        print("Something went wrong!")
+    except sql.OperationalError as error:
+        print(f"Something went wrong!: {error} ")
