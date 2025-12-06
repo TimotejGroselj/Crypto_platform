@@ -24,7 +24,8 @@ for el in divisors:
     i += 1
 print('$'*len(divisors) + ' Loading complete!')
 
-
+for i in divisors[:-1]:
+    print(i)
 
 
 

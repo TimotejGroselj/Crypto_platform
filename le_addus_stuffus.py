@@ -23,7 +23,7 @@ with connection:
             elstrong = f'Progress: {str(10 * start)}%' #progress bar da se nous ukenju :)
             print("$" * start + "-" * (length - start) + ' ' + elstrong)
             dateprice = get_prices(coin)
-            for date,price in dateprice:
+            for date,price in dateprice[:-1]:
                 date = datetime.fromtimestamp(date/1000).strftime("%Y-%m-%d")
                 command = "INSERT INTO coins_prices (coin_id, date, price) VALUES (?,?,?);"
                 cur.execute(command,[coin,date,price])
