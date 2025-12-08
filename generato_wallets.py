@@ -1,7 +1,6 @@
 import sqlite3 as sql
-import bcrypt as by
 import random as r
-import pickle
+from funkcije_encription import *
 conn = sql.connect('cryptodata.sqlite')
 
 with conn:
@@ -23,14 +22,11 @@ with conn:
     SELECT coin_id FROM coins
     """
     coins = cur.execute(querry).fetchall()
-    with open(f"data.bin", "rb") as data:
-        salt = pickle.load(data)
     for _ in range(500):
         id = r.choice(le_tabelus)
         coin_id = r.choice(coins)[0]
         quantaty = r.randrange(0,10000)/100
-        id = str(id[0]).encode('utf-8')
-        le_hash = by.hashpw(id,salt).decode('utf-8')
+        le_hash = id_to_hash(id[0])
         querry = """
         INSERT INTO wallets
         (wallet_id,coin_id,quantity)
