@@ -10,7 +10,7 @@ with conn:
     SELECT coin_id,quantity FROM wallets
     WHERE wallet_id = ?
     """
-    hash = id_to_hash(20)
+    hash = id_to_hash(27)
     print(hash)
     print(cur.execute(querry,(hash,)).fetchall())
         
