@@ -11,7 +11,7 @@ with conn:
     trans_id integer PRIMARY KEY,
 	wallet_id VARCHAR(50),
     coin_id VARCHAR(15),
-    quantity numeric(15,6),
+    quantity numeric(15,6) CHECK (quantity > 0),
     date date NOT NULL,
     valid integer CHECK (valid in (0,1)),
     type VARCHAR(4) CHECK (type in ('buy','sell'))
@@ -64,5 +64,10 @@ with conn:
                 #ustvarimo indeks ki bo uporabljen za določanje datuma. je lahko najmanj isto kot prejšnji določen inddeks, indeks je zgoraj omejen tako da lahko vse transakcije spravimo (sam da bad luck ne cock blocka)
                 kok = investments[i]
                 cur.execute(querry,(wallet_id[0],coin_id,abs(kok),dates[ind][0],1,'sell' if kok < 0 else 'buy'))
-#mogu bi testirat sam iskreno se mi rs ne da+mogu bi dodat še neki invalid transactionu sam tt to se mi pc ne da
-        
+                #še par failanih transakcij
+                if i % 4 ==0:
+                    if kok<0:
+                        cur.execute(querry,(wallet_id[0],coin_id,abs(kok)+r.uniform(0,100),dates[ind][0],0,'sell'))
+                    else:
+                        cur.execute(querry,(wallet_id[0],coin_id,abs(abs(kok)+r.uniform(-100,100)),dates[ind][0],0,'buy'))
+    
