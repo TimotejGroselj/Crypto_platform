@@ -7,7 +7,7 @@ with open(f"data.bin", "rb") as data:
 with conn:
     cur = conn.cursor()
     querry = """
-    SELECT coin_id,quantity FROM wallets
+    SELECT coin_id,quantity FROM balances
     WHERE wallet_id = ?
     """
     hash = id_to_hash(27)
