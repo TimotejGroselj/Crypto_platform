@@ -1,0 +1,27 @@
+monkeh 1:
+-GUI
+-graf creator fn
+monkeh 2: 
+-login
+-add user
+-check balance
+-today data of coin
+-check moneh
+-invest moneh
+-take out moneh
+-le start
+
+zivijo.
+1. si že uporabnik
+	ja - login in na nasledn
+	ne - ustvari account in pol nazaj na 1.
+
+2.kaj želiš početi:
+	1. poglej današnje cene (za vse coine)
+	2. poglej graf coina
+	3. poglej svoj denar na voljo za investiranje
+	4. poglej svoj wallet balance
+	5. investiraj moneh
+	6. vzem moneh
+	7. izvedi trans
+
