@@ -6,10 +6,9 @@ monkeh 2:
 -add user
 -check balance
 -today data of coin
--check moneh
 -invest moneh
 -take out moneh
--le start
+-le start (ustvari database, če na kompu še ne obstaja)
 
 zivijo.
 1. si že uporabnik

@@ -31,3 +31,4 @@ class Coin():
         return self.coin_name
     def get_coin_img(self):
         return self.coin_img
+    
