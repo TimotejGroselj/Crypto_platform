@@ -11,7 +11,7 @@ with connection:
     try:
         for coin in data: #coinov ne bova dodajala (omejila samo na 10 coinov)
             c1 = "SELECT coin_name FROM coins WHERE coin_id = ?"
-            here = cur.execute(c1,[coin['id']])
+            here = cur.execute(c1,[coin['id']]).fetchall()
             if not here:
                 command = "INSERT INTO coins (coin_id, coin_name, coin_img) VALUES (?,?,?);"
                 cur.execute(command,[coin['id'],coin['name'],coin['image']])

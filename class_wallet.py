@@ -4,7 +4,7 @@ class Wallet():
     """
     
     """
-    def __init__(self, hash, moneh = 0):
+    def __init__(self, hash:str, moneh = 0):
         self.hash = hash
         self.moneh = moneh
         conn = sql.connect('cryptodata.sqlite') 
