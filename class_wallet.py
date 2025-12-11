@@ -4,20 +4,16 @@ class Wallet():
     """
     
     """
-    def __init__(self, hash:str, moneh = 0):
-        self.hash = hash
-        self.moneh = moneh
+    def __init__(self, hash:str):
         conn = sql.connect('cryptodata.sqlite') 
         with conn:
             self.cur = conn.cursor()
-    
-    def  insert_wallet(self):
+        self.hash = hash
         querry = """
-        INSERT INTO wallets
-        (wallet_id,moneh)
-        VALUES(?,?)
-        """
-        self.cur.execute(querry,(self.hash,self.moneh))
+            SELECT moneh FROM wallets
+            WHERE wallet_id = ?
+            """
+        self.moneh = self.cur.execute(querry,self.hash).fetchone()
 
     def add_remove_moneh(self,moneh):
         self.moneh += moneh

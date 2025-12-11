@@ -4,17 +4,16 @@ class Coin():
     """
     
     """
-    def __init__(self, coin_id, coin_name, coin_img):
-        self.coin_id = coin_id
-        self.coin_name = coin_name
-        self.coin_img = coin_img
+    def __init__(self, coin_id):
         conn = sql.connect('cryptodata.sqlite') 
         with conn:
             self.cur = conn.cursor()
-    
-    def  insert_coin(self):
-        command = "INSERT INTO coins (coin_id, coin_name, coin_img) VALUES (?,?,?);"
-        self.cur.execute(command,(self.coin_id,self.coin_name,self.coin_img))
+        self.coin_id = coin_id
+        querry = """
+        SELECT coin_name, coin_img FROM coins
+        WHERE coin_id = ?
+        """
+        self.coin_name,self.coin_img = self.cur.execute(querry).fetchall()
 
     def get_prices(self):
         querry = """
@@ -26,3 +25,9 @@ class Coin():
         for coin_id,quantity in le_data:
             le_dict[coin_id] = quantity
         return le_dict
+    def get_coin_id(self):
+        return self.coin_id
+    def get_coin_name(self):
+        return self.coin_name
+    def get_coin_img(self):
+        return self.coin_img

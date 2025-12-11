@@ -14,8 +14,8 @@ class Transactions():
         self.quantity = quantity
         self.type =type
         self.date = date
+        self.valid = "?"
     
-
     def insert_failed_trans(self):
         """
 
@@ -28,7 +28,9 @@ class Transactions():
                 (wallet_id,coin_id,quantity,date,valid,type)
                 VALUES (?,?,?,?,?,?)
                 """
-            cur.execute(querry,(self.wallet_id,self.coin_id,self.quantity,self.date,0,self.type))
+            self.valid = 0
+            cur.execute(querry,(self.wallet_id,self.coin_id,self.quantity,self.date,self.valid,self.type))
+            
     def insert_succesful_trans(self,new_balance, new_quantity):
         """
         
@@ -41,13 +43,13 @@ class Transactions():
                 (wallet_id,coin_id,quantity,date,valid,type)
                 VALUES (?,?,?,?,?,?)
                 """
-            cur.execute(querry, (self.wallet_id,self.coin_id,self.quantity,self.date,1,self.type))
-            wallet = Wallet(self.wallet_id,new_balance)
-            wallet.insert_wallet()
+            self.valid = 1
+            cur.execute(querry, (self.wallet_id,self.coin_id,self.quantity,self.date,self.valid,self.type))
             querry = """
             UPDATE balances SET quantity = ? WHERE wallet_id = ? AND coin_id = ?
             """
             cur.execute(querry,(new_quantity, self.wallet_id,self.coin_id))
+            
 
     def izvedi_transakcijo(self):
         """
@@ -100,3 +102,11 @@ class Transactions():
                 self.insert_succesful_trans(self,self.wallet_id,self.coin_id,self.quantity,self.type,self.date,new_balance, new_quantity)
                 return True
             
+    def get_trans_coin_id(self):
+        return self.coin_id
+    def get_trans_wallet_id(self):
+        return self.wallet_id
+    def get_type(self):
+        return self.type
+    def get_valid(self):
+        return self.valid
