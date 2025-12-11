@@ -2,6 +2,7 @@ from das_data import data,get_prices,populars
 import sqlite3 as sql
 import time
 from datetime import datetime
+from class_coin import Coin
 
 
 connection = sql.connect("cryptodata.sqlite")

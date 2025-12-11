@@ -1,7 +1,9 @@
 import sqlite3 as sql
 from funkcije_encription import *
 import random as r
+from class_wallet import Wallet
 conn = sql.connect('cryptodata.sqlite')
+
 
 with conn:
     cur = conn.cursor()
@@ -19,12 +21,6 @@ with conn:
     le_tabelus = cur.execute(querry).fetchall()
     for user_id in le_tabelus:
         le_hash = id_to_hash(user_id[0])
-        print(le_hash)
-        
-        querry = """
-        INSERT INTO wallets
-        (wallet_id,moneh)
-        VALUES(?,?)
-        """
-        cur.execute(querry,(le_hash,r.uniform(0,100000)))
+        wallet = Wallet(le_hash,r.uniform(0,100000))
+        wallet.insert_wallet()
         
