@@ -21,7 +21,7 @@ class Login:
         """Preveri, če uporabnik že obstaja v bazi"""
         return self.cur.execute('SELECT username FROM users WHERE email = ?',[email]).fetchone()
 
-    def create_user(self,username,email,password=""):
+    def create_user(self,username,email,password=""): #tuki mors se generatat assets zanga
         """Ustvari uporabniški profil"""
         match = re.findall(r".+@.+\..+", email)
         if not match:
