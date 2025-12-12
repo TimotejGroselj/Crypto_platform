@@ -33,7 +33,7 @@ def update_coins_prices(coin):
     with connection:
         q1 = "SELECT MAX(date) FROM coins_prices WHERE coin_id = ?;"
         last_date = cur.execute(q1,[coin]).fetchone()[0]
-        if not last_date: last_date = ''
+        if not last_date: last_date = '' #če slučajn ni nobenga datuma not
         yesterday = ''
         for date,price in dateprice:
             real_date = datetime.fromtimestamp(date/1000).strftime("%Y-%m-%d")
