@@ -32,7 +32,7 @@ def update_coins_prices(coin):
     cur = connection.cursor()
     dateprice = get_prices(coin)
     with connection:
-        q1 = "SELECT MAX(date) FROM coins_prices WHERE coin_id = ?;"
+        q1 = "SELECT MAX(date) FROM coins_prices WHERE coin_id = ?;" #dobimo zadnji datum, ki je biu updatan
         last_date = cur.execute(q1,[coin]).fetchone()[0]
         if not last_date: last_date = '' #če slučajn ni nobenga datuma not
         yesterday = ''
