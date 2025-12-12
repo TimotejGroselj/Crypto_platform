@@ -1,0 +1,64 @@
+import sqlite3 as sql
+import re
+import random
+import string
+
+
+class Login:
+    def __init__(self):
+        self.conn = sql.connect('cryptodata.sqlite')
+        self.cur = self.conn.cursor()
+
+    def valid_login(self,email,password):
+        """Preveri, če je uporabnik vnesel pravilno geslo oz email za vstop v platformo"""
+        q1 = "SELECT password FROM users WHERE email = ?"
+        checker = self.cur.execute(q1,[email]).fetchone()[0]
+        if password == checker:
+            return True
+        return False
+
+    def check_user(self,email):
+        """Preveri, če uporabnik že obstaja v bazi"""
+        return self.cur.execute('SELECT username FROM users WHERE email = ?',[email]).fetchone()
+
+    def create_user(self,username,email,password=""):
+        """Ustvari uporabniški profil"""
+        match = re.findall(r".+@.+\..+", email)
+        if not match:
+            return 'Invalid email address!'
+        if password == "":
+            for i in range(10):
+                letter = random.choice(string.printable)
+                password += letter
+        strong_password = {'lowercase':0,'uppercase':0,'digit':0,'special':0}
+        for i in password:
+            if 'a' <= i <= 'z':
+                strong_password['lowercase'] += 1
+            if 'A' <= i <= 'Z':
+                strong_password['uppercase'] += 1
+            if '0' <= i <= '9':
+                strong_password['digits'] += 1
+            else:
+                strong_password['special'] += 1
+        for key,item in strong_password.items():
+            if item < 2:
+                return f'Password must contain at least 2 {key} characters!'
+        with self.conn:
+            q1 = "INSERT INTO users (username, email, password) VALUES (?,?,?)"
+            self.cur.execute(q1,[username,email,password])
+        return 'Success!'
+
+    def close(self):
+        """Zapremo sejo v temu classu"""
+        self.cur.close()
+        self.conn.close()
+
+
+
+
+
+
+
+
+
+
