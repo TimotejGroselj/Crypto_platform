@@ -61,4 +61,3 @@ for coin in populars:
     time.sleep(15)
     start += 1
 print('$' * length + ' Loading complete!')
-print()
