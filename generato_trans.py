@@ -21,7 +21,7 @@ with conn:
     querry = """
     SELECT wallet_id FROM wallets
     """
-    balances = cur.execute(querry).fetchall()
+    wallets = cur.execute(querry).fetchall()
     querry = """
         SELECT date FROM coins_prices
         GROUP BY date
@@ -29,7 +29,7 @@ with conn:
     dates = cur.execute(querry).fetchall()
     dates.sort()
     m = len(dates)
-    for wallet_id in balances:
+    for wallet_id in wallets:
         querry = """
         SELECT coin_id, quantity FROM balances
         WHERE wallet_id = ?
