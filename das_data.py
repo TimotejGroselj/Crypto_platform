@@ -39,7 +39,7 @@ def get_prices(coin_id):
             break
         else:
             print("Couse api doesnt like you a 60 second penalty -_-")
-            time.sleep(60)
+            time.sleep(61)
     data = response.json()
     return data["prices"]
 
