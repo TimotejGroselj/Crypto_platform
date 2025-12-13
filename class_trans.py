@@ -59,10 +59,10 @@ class Transactions():
         with conn:
             cur = conn.cursor()
             querry = """
-            SELECT moneh FROM wallets
+            SELECT money FROM assets
             WHERE wallet_id = ?
             """
-            moneh = cur.execute(querry,self.wallet_id).fetchone()
+            money = cur.execute(querry,self.wallet_id).fetchone()
             querry = """
             SELECT coin_id from coins
             WHERE coin_id = ?
@@ -77,7 +77,7 @@ class Transactions():
             """
             coin_price = cur.execute(querry,(self.coin_id,self.date)).fetchone()
             #PRODPOSTAVMO DA SO PODATKI POSODBLJENI
-            used_moneh = coin_price*self.quantity
+            used_money = coin_price*self.quantity
     
             querry = """
             SELECT quantity FROM balances
@@ -89,15 +89,15 @@ class Transactions():
                     self.insert_failed_trans(self,self.wallet_id,self.coin_id,self.quantity,self.type,self.date)
                     return None
                 else:
-                    new_balance = moneh+used_moneh
+                    new_balance = money+used_money
                     new_quantity = how_many - self.quantity
                     self.insert_succesful_trans(self,self.wallet_id,self.coin_id,self.quantity,self.type,self.date,new_balance, new_quantity)
                     return True
-            if moneh == None or moneh < used_moneh:
+            if money == None or money < used_money:
                 self.insert_failed_trans(self,self.wallet_id,self.coin_id,self.quantity,self.type,self.date)
                 return None
             else:
-                new_balance = moneh-used_moneh
+                new_balance = money-used_money
                 new_quantity = how_many + self.quantity
                 self.insert_succesful_trans(self,self.wallet_id,self.coin_id,self.quantity,self.type,self.date,new_balance, new_quantity)
                 return True

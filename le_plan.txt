@@ -1,14 +1,13 @@
 monkeh 1:
--GUI
+-starting creator file + text UI
 -graf creator fn
 monkeh 2: 
 -login ✅ 
 -add user ✅
 -check balance ✅
 -today data of coin ☐
--invest moneh ✅
--take out moneh ✅
--le start (bascily giant ass backend file) ☐
+-invest money ✅
+-take out money ✅
 
 zivijo.
 1. si že uporabnik
@@ -18,9 +17,8 @@ zivijo.
 2.kaj želiš početi:
 	1. poglej današnje cene (za vse coine)
 	2. poglej graf coina
-	3. poglej svoj denar na voljo za investiranje
-	4. poglej svoj wallet balance
-	5. investiraj moneh
-	6. vzem moneh
+	4. poglej svoj assets
+	5. investiraj money
+	6. vzem money
 	7. izvedi trans
 
