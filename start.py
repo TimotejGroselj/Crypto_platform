@@ -28,7 +28,7 @@ while True:
         else:
             continue
     if int(is_user) == 2:
-        do_register() #ne rabimo nič kr zmer ko ustvariš account te fukne nazaj na login screan in to se tle zgodi
+        do_register() #ne rabimo nič kr zmer ko ustvariš account te fukne nazaj na login screan in to se tle zgodi1
     
         
     

@@ -2,7 +2,7 @@ import sqlite3 as sql
 import re
 import random
 import string
-
+from funkcije_encription import *
 
 class Login:
     def __init__(self):
@@ -13,7 +13,7 @@ class Login:
         """Preveri, če je uporabnik vnesel pravilno geslo oz email za vstop v platformo"""
         q1 = "SELECT password FROM users WHERE email = ?"
         checker = self.cur.execute(q1,[email]).fetchone()[0]
-        if password == checker:
+        if id_to_hash(password) == checker:
             return True
         return False
 
@@ -57,7 +57,7 @@ class Login:
                 password += letter
         with self.conn:
             q1 = "INSERT INTO users (username, email, password) VALUES (?,?,?)"
-            self.cur.execute(q1,[username,email,password])
+            self.cur.execute(q1,[username,email,id_to_hash(password)])
 
     def close(self):
         """Zapremo sejo v temu classu"""
