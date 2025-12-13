@@ -51,7 +51,7 @@ def update_coins_prices(coin):
     return None
 
 
-
+fill_coins_table()
 length = len(populars)
 start = 0
 print(f'Do not abort the process (cca 2.5 minutes) -> grab a coffee :)')
