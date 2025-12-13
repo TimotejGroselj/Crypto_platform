@@ -33,14 +33,9 @@ command = """
         """
 with conn:
     cur = conn.cursor()
-    cur.executescript(command)
-    querry = "SELECT user_id FROM users;"
-    le_tabelus = cur.execute(querry).fetchall()
-    coins = cur.execute("SELECT coin_id FROM coins;").fetchall()
-    for user_id in le_tabelus:
-        le_hash = id_to_hash(user_id[0])
-        cur.execute("INSERT INTO assets (wallet_id,coin_id,money) VALUES (?,?,?)",
-                    [le_hash, 'EUR', round(random.uniform(200, 1000), 2)])
-        for coin in coins:
-            q2 = "INSERT INTO assets (wallet_id, coin_id,money) VALUES (?,?,?)"
-            cur.execute(q2, [le_hash, coin[0], 0])
+    try:
+        cur.executescript(command)
+        print("Success")
+    except sql.OperationalError as e:
+        print(f"An error occurred: {e}")
+
