@@ -21,12 +21,18 @@ class Login:
         """Preveri, če uporabnik že obstaja v bazi"""
         return self.cur.execute('SELECT username FROM users WHERE email = ?',[email]).fetchone() != None
     def valid_email(self,email):
+        """
+        preveri če je mail valid
+        """
         match = re.findall(r".+@.+\..+", email)
         if not match:
             return False
         return True
     
     def valid_password(self,password):
+        """
+        preveri če je geslo valid
+        """
         strong_password = {'lowercase':0,'uppercase':0,'digit':0,'special':0}
         for i in password:
             if 'a' <= i <= 'z':

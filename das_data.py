@@ -8,14 +8,16 @@ populars = ['bitcoin', 'ethereum', 'ripple',
             'binancecoin', 'solana', 'tron',
             'dogecoin', 'cardano','chainlink','avalanche-2']
 
+
+response=requests.get(url)
 while True:
-    response=requests.get(url)
     if response.status_code==200:
-        print("Gathering data...")
+        print("Gathering data about coins...")
         break
     else:
-        print("api dick")
+        print("Couse api doesnt like you a 60 second penalty -_-")
         time.sleep(60)
+
 
 data = []
 curr_price = []
@@ -32,12 +34,11 @@ def get_prices(coin_id):
     while True:
         response=requests.get(url)
         if response.status_code==200:
-            print("Gathering data...")
+            print("Gathering data about prices...")
             break
         else:
-            print("api dick")
+            print("Couse api doesnt like you a 60 second penalty -_-")
             time.sleep(60)
-            
     data = response.json()
     return data["prices"]
 

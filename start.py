@@ -3,7 +3,7 @@ from class_coin import Coin
 from el_assetso import Assets
 from el_login import Login
 import os
-#from le_addus_stuffus import update_coins_prices
+from updater import *
 from das_model_thingy import * #tuki so vse funkcije ki jih tle uporablaš tuki NE SMEVA KLICAT NČ SQL
 
 if not os.path.exists("cryptodata.sqlite"):
@@ -12,8 +12,9 @@ if not os.path.exists("cryptodata.sqlite"):
     subprocess.run(["python","le_addus_stuffus.py"])
     subprocess.run(["python","generato_trans.py"])
     
-
-#update_coins_prices() morm se spisat
+for coin in get_coins():
+    if not is_updated(coin):
+        update_coins_prices(coin)
 
 
 print("Hello user!")

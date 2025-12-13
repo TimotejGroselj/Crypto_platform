@@ -2,10 +2,15 @@ import subprocess
 from class_coin import Coin
 from el_assetso import Assets
 from el_login import Login
-
-
-
-
+import sqlite3 as sql
+def get_coins():
+    conn = sql.connect('cryptodata.sqlite') 
+    with conn:
+        cur = conn.cursor()
+        querry = """
+        SELECT coin_id FROM coins
+        """
+        return cur.execute(querry).fetchall()
 
 def do_login():
     """
@@ -33,6 +38,8 @@ def do_login():
                 continue    
             if int(try_again) == 2:
                 return None
+            
+            
 def do_register():
     login = Login()
     name = input("Enter your username: ")
