@@ -2,6 +2,8 @@ from das_data import data,get_prices,populars
 import sqlite3 as sql
 import time
 from datetime import datetime
+from funkcije_encription import *
+import random
 
 
 def fill_coins_table():
@@ -49,6 +51,21 @@ def update_coins_prices(coin):
             yesterday = real_date
     return None
 
+def assign_wallets():
+    connection = sql.connect("cryptodata.sqlite")
+    cur = connection.cursor()
+    querry = "SELECT user_id FROM users;"
+    le_tabelus = cur.execute(querry).fetchall()
+    coins = cur.execute("SELECT coin_id FROM coins;").fetchall()
+    with connection:
+        for user_id in le_tabelus:
+            le_hash = id_to_hash(user_id[0])
+            cur.execute("INSERT INTO assets (wallet_id,coin_id,money) VALUES (?,?,?)",
+                        [le_hash, 'EUR', round(random.uniform(200, 1000), 2)])
+            for coin in coins:
+                q2 = "INSERT INTO assets (wallet_id, coin_id,money) VALUES (?,?,?)"
+                cur.execute(q2, [le_hash, coin[0], 0])
+    return None
 
 fill_coins_table()
 length = len(populars)
@@ -61,3 +78,5 @@ for coin in populars:
     time.sleep(15)
     start += 1
 print('$' * length + ' Loading complete!')
+#generate_users()
+assign_wallets()
