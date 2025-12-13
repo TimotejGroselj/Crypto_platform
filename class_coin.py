@@ -60,7 +60,6 @@ class Coin():
             else:
                 difs[0].append(-dif)
                 difs[1].append(0)
-        print(difs)
         ax.errorbar(list(le_data.keys())[:-1],list(le_data.values())[:-1],yerr=difs,color = "blue",ecolor="red")
         
         ax_image = fig.add_axes([0.9,0.9,0.1,0.1])
@@ -75,3 +74,4 @@ class Coin():
         
 coin = Coin("bitcoin")
 coin.draw_graph()
+print("cock")
