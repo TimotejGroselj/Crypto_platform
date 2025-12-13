@@ -9,8 +9,9 @@ populars = ['bitcoin', 'ethereum', 'ripple',
             'dogecoin', 'cardano','chainlink','avalanche-2']
 
 
-response=requests.get(url)
+
 while True:
+    response=requests.get(url)
     if response.status_code==200:
         print("Gathering data about coins...")
         break
