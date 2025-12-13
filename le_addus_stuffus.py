@@ -52,6 +52,7 @@ def update_coins_prices(coin):
     return None
 
 def assign_wallets():
+    """Vsakemu uporabniku poda lastno denarnico"""
     connection = sql.connect("cryptodata.sqlite")
     cur = connection.cursor()
     querry = "SELECT user_id FROM users;"
