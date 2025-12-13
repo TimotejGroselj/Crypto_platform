@@ -72,6 +72,3 @@ class Coin():
         #i can add abunch more stuff sam mi mors povedat kaj bi zgledal kulll pa prav za pc spletno stran
         plt.show()
         
-coin = Coin("bitcoin")
-coin.draw_graph()
-print("cock")

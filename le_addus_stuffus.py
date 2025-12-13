@@ -76,7 +76,6 @@ for coin in populars:
     elstrong = f'Progress: {str((100 / length) * start)}%'
     print("$" * start + "-" * (length - start) + ' ' + elstrong)
     update_coins_prices(coin)
-    time.sleep(15)
     start += 1
 print('$' * length + ' Loading complete!')
 #generate_users()

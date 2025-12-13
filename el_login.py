@@ -8,7 +8,6 @@ class Login:
     def __init__(self):
         self.conn = sql.connect('cryptodata.sqlite')
         self.cur = self.conn.cursor()
-
     def valid_login(self,email,password):
         """Preveri, če je uporabnik vnesel pravilno geslo oz email za vstop v platformo"""
         q1 = "SELECT password FROM users WHERE email = ?"
@@ -17,9 +16,9 @@ class Login:
             return True
         return False
 
-    def check_user(self,email):
+    def is_user(self,email):
         """Preveri, če uporabnik že obstaja v bazi"""
-        return self.cur.execute('SELECT username FROM users WHERE email = ?',[email]).fetchone()
+        return self.cur.execute('SELECT username FROM users WHERE email = ?',[email]).fetchone() != None
 
     def create_user(self,username,email,password=""): #tuki mors se generatat assets zanga
         """Ustvari uporabniški profil"""

@@ -20,6 +20,7 @@ with conn:
     cur.executescript(querry)
     querry = """
     SELECT wallet_id FROM assets
+    GROUP BY wallet_id
     """
     wallets = cur.execute(querry).fetchall()
     querry = """
@@ -31,7 +32,7 @@ with conn:
     m = len(dates)
     for wallet_id in wallets:
         querry = """
-        SELECT coin_id, quantity FROM balances
+        SELECT coin_id, money FROM assets
         WHERE wallet_id = ? AND coin_id != 'EUR'
         """
         data = cur.execute(querry,wallet_id).fetchall()
