@@ -19,7 +19,7 @@ with conn:
     """
     cur.executescript(querry)
     querry = """
-    SELECT wallet_id FROM wallets
+    SELECT wallet_id FROM assets
     """
     wallets = cur.execute(querry).fetchall()
     querry = """
@@ -32,10 +32,11 @@ with conn:
     for wallet_id in wallets:
         querry = """
         SELECT coin_id, quantity FROM balances
-        WHERE wallet_id = ?
+        WHERE wallet_id = ? AND coin_id != 'EUR'
         """
         data = cur.execute(querry,wallet_id).fetchall()
         for coin_id, quantity in data:
+            
             n = r.randint(1,30)
             #kolk transakciji je za ta coin naredu en wallet
             how_many = r.uniform(1,1000)
@@ -49,8 +50,9 @@ with conn:
             # -sum vseh trans do zdaj. 
             # zdaj imamo vektor in ga "normiramo" tako da je seštevek elementov enak quantity
             summ = sum(investments)
-            investments = [el/(summ/quantity) for el in investments]
-            #zdaj se nam vse investicije v coin seštejejo v količino coina ki jo uporabnik ima in so veljavne dokler bojo podatki dodani v pravilnem vrstnem redu
+            investments = [el/(summ/(quantity+0.1)) for el in investments]
+            #zdaj se nam vse investicije v coin seštejejo v količino coina ki jo uporabnik ima in so veljavne dokler bojo podatki dodani v pravilnem vrstnem redu, 
+            # +0.1 je zato da se pri coinih, katerih končno stanje je 0 izognemo deljenju z 0 in še vseeno dobimo transakcije ki se seštejejo v skoraj 0.
             maxx = -1
             for i in range(n):
                 querry = """

@@ -6,8 +6,8 @@ monkeh 2:
 -add user ✅
 -check balance ✅
 -today data of coin ☐
--invest moneh ✅
--take out moneh ✅
+-invest money ✅
+-take out money ✅
 -le start (bascily giant ass backend file) ☐
 
 zivijo.
@@ -20,7 +20,7 @@ zivijo.
 	2. poglej graf coina
 	3. poglej svoj denar na voljo za investiranje
 	4. poglej svoj wallet balance
-	5. investiraj moneh
-	6. vzem moneh
+	5. investiraj money
+	6. vzem money
 	7. izvedi trans
 

@@ -17,7 +17,6 @@ def fill_coins_table():
         coinz = cur.execute(q1).fetchall()
         if not coinz:
             for coin in data:
-                coin = coin[0]
                 q2 = "INSERT INTO coins (coin_id, coin_name, coin_img) VALUES (?,?,?);"
                 cur.execute(q2, [coin['id'], coin['name'], coin['image']])
     return None
