@@ -40,7 +40,7 @@ def update_coins_prices(coin):
         for date,price in dateprice:
             real_date = datetime.fromtimestamp(date/1000).strftime("%Y-%m-%d")
             if real_date <= last_date:
-                pass
+                continue
             else:
                 if yesterday == real_date:
                     q2 = "UPDATE coins_prices SET price = ? WHERE coin_id = ? AND date = ?;"

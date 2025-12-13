@@ -8,8 +8,14 @@ populars = ['bitcoin', 'ethereum', 'ripple',
             'binancecoin', 'solana', 'tron',
             'dogecoin', 'cardano','chainlink','avalanche-2']
 
-if response.status_code!=200:
-    print("Call limit exceeded!")
+while True:
+    response=requests.get(url)
+    if response.status_code==200:
+        print("Gathering data...")
+        break
+    else:
+        print("api dick")
+        time.sleep(60)
 
 data = []
 curr_price = []
