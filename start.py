@@ -17,6 +17,7 @@ coins = get_coins()
 #        update_coins_prices(coin.get_coin_id())
 
 
+
 print("Hello user!")
 print("Most of the user interface is done with the use of numbers. Just enter the number next to the option you wish to do if there is a number.")
 cond = True
