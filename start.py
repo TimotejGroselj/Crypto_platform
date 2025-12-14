@@ -11,14 +11,10 @@ from das_model_thingy import * #tuki so vse funkcije ki jih tle uporablaš tuki 
 #    subprocess.run(["python","le_tablus_creator.py"])
 #    subprocess.run(["python","le_addus_stuffus.py"])
 #    subprocess.run(["python","generato_trans.py"])
-coins_ids = get_coins()
+coins = get_coins()
 #for coin in coins_ids:
-#    if not is_updated(coin):
-#        update_coins_prices(coin)
-coins = []
-for coin_id in coins_ids:
-    coins.append(Coin(coin_id[0]))
-
+#   if not is_updated(coin.get_coin_id()):
+#        update_coins_prices(coin.get_coin_id())
 
 
 print("Hello user!")
@@ -43,32 +39,15 @@ while cond:
     if int(what_to_do) == 1:
         pass
     if int(what_to_do) == 2:
-        string = "Which coin do you wish to see:\n"
-        for i,coin in enumerate(coins):
-            string += f"{i+1}. {coin.get_coin_name()}\n"
-        which_one = input(string)
-        coins[int(which_one)-1].draw_graph()
+        show_graph(coins)
     if int(what_to_do) == 3:
-        assets = user.check_assets()
-        for coin, quant in assets.items():
-            print(f"{coin.get_coin_name()}: {quant}")
+        user.show_assets()
     if int(what_to_do) == 4:
-        money = input("How much do you wish to deposit (this money will be available for commiting transactions): ")
-        user.change_eur(int(money))
-        
+        user.deposit()
     if int(what_to_do) == 5:
-        while True:
-            money = int(input("How much do you wish to take out (this money was eaither deposited to the account or acquired through selling): "))
-            if not user.change_eur(-money):
-                try_again = input("You cant take out more than you own!\n1. Try again\n2. Leave\n")
-                if int(try_again) == 1:
-                    continue
-                if int(try_again) == 2:
-                    break
-            else:
-                break
+        user.take_out()
     if int(what_to_do) == 6:
-        pass
+        user.do_buy_sell()
     if int(what_to_do) == 7:
         break
         

@@ -12,8 +12,23 @@ def get_coins():
         querry = """
         SELECT coin_id FROM coins
         """
-        return cur.execute(querry).fetchall()
+        coins_ids = cur.execute(querry).fetchall()
+        coins = []
+        for coin_id in coins_ids:
+            coins.append(Coin(coin_id[0]))
+        return coins
 
+
+def show_graph(coins):
+    """
+    
+    """
+    string = "Which coin do you wish to see:\n"
+    for i,coin in enumerate(coins):
+        string += f"{i+1}. {coin.get_coin_name()}\n"
+    which_one = input(string)
+    coins[int(which_one)-1].draw_graph()
+    
 def do_login():
     """
     Izvede login
@@ -86,15 +101,8 @@ def do_register():
             if int(try_again) == 2:
                 return False      
 
-def get_name(email):
-    conn = sql.connect('cryptodata.sqlite') 
-    with conn:
-        cur = conn.cursor()
-        querry = """
-        SELECT username FROM users
-        WHERE email = ?
-        """
-        return cur.execute(querry, email).fetchone()
+
+
 
             
                 

@@ -33,9 +33,15 @@ class Coin():
             """
         le_data=self.cur.execute(querry,(self.coin_id,)).fetchall()
         le_dict = dict()
-        for coin_id,quantity in le_data:
-            le_dict[coin_id] = quantity
+        for date,quantity in le_data:
+            le_dict[date] = quantity
         return le_dict
+    def get_todays_price(self):
+        querry = """
+            SELECT price FROM coins_prices
+            WHERE coin_id = ? and date = (SELECT MAX(date) FROM coins_prices WHERE coin_id = ?)
+            """
+        return self.cur.execute(querry,(self.coin_id,self.coin_id)).fetchone()[0]
     def get_coin_id(self):
         return self.coin_id
     def get_coin_name(self):
