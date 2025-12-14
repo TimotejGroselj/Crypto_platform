@@ -15,13 +15,17 @@ class Coin():
         with conn:
             self.cur = conn.cursor()
         self.coin_id = coin_id
-        querry = """
-        SELECT coin_name, coin_img FROM coins
-        WHERE coin_id = ?
-        """
-
-        self.coin_name,self.coin_img = self.cur.execute(querry,(self.coin_id,)).fetchall()[0]
-
+        if self.coin_id != "EUR":
+            querry = """
+            SELECT coin_name, coin_img FROM coins
+            WHERE coin_id = ?
+            """
+            data = self.cur.execute(querry,(self.coin_id,)).fetchall()[0]
+            self.coin_name = data[0]
+            self.coin_img = data[1]
+        else:
+            self.coin_name = "EUR"
+            self.coin_img = None
     def get_prices(self):
         querry = """
             SELECT date, price FROM coins_prices

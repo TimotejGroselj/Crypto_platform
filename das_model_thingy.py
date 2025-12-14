@@ -3,6 +3,8 @@ from class_coin import Coin
 from el_assetso import Assets
 from el_login import Login
 import sqlite3 as sql
+from class_user import User
+
 def get_coins():
     conn = sql.connect('cryptodata.sqlite') 
     with conn:
@@ -30,8 +32,9 @@ def do_login():
     while True:
         password = input("Enter password: ")
         if login.valid_login(email,password):
-            print("Succesful login!")
-            return email
+            user = User(email)
+            print(f"Succesful login! Hello {user.get_username()}. ")
+            return user
         else:
             try_again = input("Incorect password!\n1. Try again\n2. Leave\n")
             if int(try_again) == 1:
@@ -83,6 +86,15 @@ def do_register():
             if int(try_again) == 2:
                 return False      
 
-    
+def get_name(email):
+    conn = sql.connect('cryptodata.sqlite') 
+    with conn:
+        cur = conn.cursor()
+        querry = """
+        SELECT username FROM users
+        WHERE email = ?
+        """
+        return cur.execute(querry, email).fetchone()
+
             
                 
