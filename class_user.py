@@ -79,10 +79,10 @@ class User():
             string += f"{item[0]}. {item[1].get_coin_name()}: {item[2]}\n"
             i += 1
         if id == 0:
-            which_one = float(input("Which coin do you want to sell?\n"+string))
+            which_one = int(input("Which coin do you want to sell?\n"+string))
             how_much = float(input(r"How much do you want to sell (enter an amount in %. The inputed % of the cryptocurrency owned will be sold): "))
         else:
-            which_one = float(input("In which coin do you want to invest?\n"+string))
+            which_one = int(input("In which coin do you want to invest?\n"+string))
             how_much = float(input(r"How much do you want to invest (enter an amount in %. The inputed % of your investable money will be invested): "))
         return (tabelus[which_one-1][1],how_much)
         
@@ -106,12 +106,12 @@ class User():
             invest = (eur*amount)/coin_price
             q1 = "UPDATE assets SET money = ? WHERE wallet_id = ? AND coin_id = ?;"
             self.cur.execute(q1,[coin_currently+invest,id_to_hash(self.id),coin.get_coin_id()])
-            self.change_eur(id_to_hash(self.id),-eur*amount)
+            self.change_eur(-eur*amount)
             q2 = "UPDATE assets SET money = ? WHERE wallet_id = ? AND coin_id = 'EUR';"
             self.cur.execute(q2,[eur,id_to_hash(self.id)])
         else:
             invest = (coin_currently*amount)*coin_price
-            
+            self.change_eur(invest)
             q1 = "UPDATE assets SET money = ? WHERE wallet_id = ? AND coin_id = ?;"
             self.cur.execute(q1,[coin_currently-(coin_currently*amount),id_to_hash(self.id),coin.get_coin_id()])
         querry = """
