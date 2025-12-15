@@ -91,7 +91,7 @@ def do_register():
             if float(money) < 0:
                 money = 0
             else: 
-                money = int(money) 
+                money = float(money) 
             ass.add_assets(email,money)
             return True
         else:
