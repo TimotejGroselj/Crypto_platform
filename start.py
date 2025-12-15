@@ -38,7 +38,7 @@ while True:
 while cond:
     what_to_do = input("What do you want to do today?\n1. See todays prices\n2. See a price graph of cryptocurrency\n3. Look at your assets\n4. Deposit money\n5. Take money out\n6. Commit a transaction \n7. Leave\n")
     if int(what_to_do) == 1:
-        pass
+        show_today_prices(coins)
     if int(what_to_do) == 2:
         show_graph(coins)
     if int(what_to_do) == 3:

@@ -29,6 +29,13 @@ def show_graph(coins):
     which_one = input(string)
     coins[int(which_one)-1].draw_graph()
     
+def show_today_prices(coins):
+    i = 1
+    for coin in coins:
+        print(f"{i}. {coin.get_coin_name()}:\n\tprice: {coin.get_todays_price()}\n\tchange from yesterday: {round(coin.get_change(),6)}%")
+        i += 1
+    
+    
 def do_login():
     """
     Izvede login
@@ -69,10 +76,7 @@ def do_register():
                 continue
             if int(try_again) == 2:
                 return False
-        else:
-            break
-            
-        if not login.is_user(email):
+        elif not login.is_user(email):
             break
         else:
             try_again = input("This email addres is already in our database.\n1. Try again\n2. Leave\n")
@@ -101,6 +105,7 @@ def do_register():
             if int(try_again) == 2:
                 return False      
 
+    
 
 
 

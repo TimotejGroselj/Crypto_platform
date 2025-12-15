@@ -42,6 +42,19 @@ class Coin():
             WHERE coin_id = ? and date = (SELECT MAX(date) FROM coins_prices WHERE coin_id = ?)
             """
         return self.cur.execute(querry,(self.coin_id,self.coin_id)).fetchone()[0]
+    def get_change(self):
+        """
+        
+        """
+        today = self.get_todays_price()
+        yesterday = datetime.fromtimestamp(time.time()-86400).strftime("%Y-%m-%d")
+        querry = """
+            SELECT price FROM coins_prices
+            WHERE coin_id = ? and date = ?
+            """
+        yesterday = self.cur.execute(querry, (self.coin_id,yesterday)).fetchone()[0]
+        return (today*100)/yesterday-100
+        
     def get_coin_id(self):
         return self.coin_id
     def get_coin_name(self):

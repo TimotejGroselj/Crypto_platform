@@ -1,5 +1,7 @@
-from datetime import datetime
-import time
+import sqlite3 as sql
 
-print(datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d"))
-        
+conn = sql.connect('cryptodata.sqlite') 
+with conn:
+    cur = conn.cursor()
+    
+print(cur.execute("SELECT username FROM users WHERE email = 'g@gmail.com'").fetchone()!= None) 

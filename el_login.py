@@ -19,7 +19,7 @@ class Login:
 
     def is_user(self,email):
         """Preveri, če uporabnik že obstaja v bazi"""
-        return self.cur.execute('SELECT username FROM users WHERE email = ?',[email]).fetchone() != None
+        return self.cur.execute('SELECT username FROM users WHERE email = ?',[email,]).fetchone() != None
     def valid_email(self,email):
         """
         preveri če je mail valid
