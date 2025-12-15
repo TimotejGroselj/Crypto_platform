@@ -55,9 +55,10 @@ class Coin():
         fig, ax = plt.subplots()
         fig.set_figwidth(15)
         fig.set_figheight(7)
+        fig.set_facecolor("dimgray")
+        ax.set_facecolor("dimgray")
         #ax.imshow(we decide le backround image)
-        
-        ax.plot(le_data.keys(), le_data.values(),color = "blue")#določva barvo glede na ozadje
+        ax.plot(le_data.keys(), le_data.values(),color = "dodgerblue")#določva barvo glede na ozadje
         ax.set_xticks(range(0,len(le_data), len(le_data)//5))
         ax.set_xlabel("date")
         ax.set_ylabel("EUR per coin")#to poprav ce se ti ne zdi prou
