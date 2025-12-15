@@ -88,7 +88,7 @@ def do_register():
             login.create_user(name,email,password)
             ass = Assets()
             money = input("How much do you wish to invest right away (write the amount of money in EUR that will be available for later trading): ")
-            if int(money) < 0:
+            if float(money) < 0:
                 money = 0
             else: 
                 money = int(money) 

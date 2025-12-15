@@ -10,7 +10,7 @@ def is_updated(coin):
     with conn:
         cur = conn.cursor()
         q1 = "SELECT MAX(date) FROM coins_prices WHERE coin_id = ?;" #dobimo zadnji datum, ki je biu updatan
-        last_date = cur.execute(q1,coin).fetchone()[0]
+        last_date = cur.execute(q1,(coin,)).fetchone()[0]
         today = datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d")
         if today <=last_date:
             return True
