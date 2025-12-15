@@ -53,5 +53,4 @@ for coin in populars:
     update_coins_prices(coin)
     start += 1
 print('$' * length + ' Loading complete!')
-#generate_users()
 assign_wallets()
