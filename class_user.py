@@ -5,15 +5,19 @@ from datetime import datetime
 import time
 
 def int_input(string, range = float("inf")):
-    x = input(string)
-    if x.isdecimal() and 0<int(x)<=range:
-        return int(x)
-    else:
-        x = int_input("Invalid input!\n1. Try again\n2. Leave\n",2)
-        if x == 1:
-            return int_input(string,range)
-        if x == 2:
-            return range
+    while True:
+        x = input(string)
+        if x.isdecimal() and 0<int(x)<=range:
+            return int(x)
+        else:
+            while True:
+                x = input("Invalid input!\n1. Try again\n2. Leave\n")
+                if x.isdecimal() and int(x) == 1:
+                    break
+                elif x.isdecimal() and int(x) == 2:
+                    return range
+                
+            
             
             
             
