@@ -6,17 +6,17 @@ import os
 from updater import *
 from das_model_thingy import * #tuki so vse funkcije ki jih tle uporablaš tuki NE SMEVA KLICAT NČ SQL
 
-"""
+
 if not os.path.exists("cryptodata.sqlite"):
     subprocess.run(["python","generato_uporabnik.py"])
     subprocess.run(["python","le_tablus_creator.py"])
     subprocess.run(["python","le_addus_stuffus.py"])
     subprocess.run(["python","generato_trans.py"])
-"""
+
 coins = get_coins()
-#for coin in coins:
-#   if not is_updated(coin.get_coin_id()):
-#        update_coins_prices(coin.get_coin_id())
+for coin in coins:
+   if not is_updated(coin.get_coin_id()):
+        update_coins_prices(coin.get_coin_id())
 
 
 
