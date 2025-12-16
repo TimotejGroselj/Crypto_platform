@@ -33,7 +33,7 @@ while True:
             continue
     if is_user == 2:
         do_register() #ne rabimo nič kr zmer ko ustvariš account te fukne nazaj na login screan in to se tle zgodi1
-    if is_user == 3 or is_user == -1:
+    if is_user == 3:
         cond = False
         break
     
