@@ -2,9 +2,8 @@ import sqlite3 as sql
 from funkcije_encription import *
 from datetime import datetime
 import time
-from class_wallet import Wallet
 
-class Transactions():
+class Transactions:
     """
     
     """

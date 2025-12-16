@@ -42,23 +42,23 @@ class Assets:
          invest_id = 1 -> če kups,0 -> če prodaš"""
         #if not(0 < amount < 100): return 'Invalid amount'
         eur = self.cur.execute("SELECT money FROM assets WHERE wallet_id = ? AND coin_id = 'EUR';", [wallet_id]).fetchone()[0]
-        if int(eur) == 0: return "Not enough EUR!"
+        if int(eur) == 0 and invest_id == 1: return "Not enough EUR!"
         coin_currently = self.cur.execute("SELECT money FROM assets WHERE wallet_id = ? AND coin_id = ?", [wallet_id,coin]).fetchone()[0]
         coin_price = self.cur.execute("SELECT price FROM coins_prices WHERE date = ?", [date]).fetchone()[0]
         with self.conn:
             if invest_id == 1:
-                invest = (eur*amount)/coin_price
+                invest = (eur*amount/100)/coin_price
                 q1 = "UPDATE assets SET money = ? WHERE wallet_id = ? AND coin_id = ?;"
                 self.cur.execute(q1,[coin_currently+invest,wallet_id,coin])
-                eur -= eur*amount
+                eur -= eur*amount/100
                 q2 = "UPDATE assets SET money = ? WHERE wallet_id = ? AND coin_id = 'EUR';"
                 self.cur.execute(q2,[eur,wallet_id])
             else:
-                invest = (coin_currently*amount)*coin_price
+                invest = (coin_currently*amount/100)*coin_price
                 self.add_eur(wallet_id,invest)
-                coin_currently -= coin_currently*amount
+                coin_currently -= coin_currently*amount/100
                 q1 = "UPDATE assets SET money = ? WHERE wallet_id = ? AND coin_id = ?;"
-                self.cur.execute(q1,[coin_currently-(coin_currently*amount),wallet_id,coin])
+                self.cur.execute(q1,[coin_currently-(coin_currently*amount/100),wallet_id,coin])
         return "Success!"
 
 
