@@ -1,9 +1,11 @@
-import subprocess
+
 from class_coin import Coin
 from el_assetso import Assets
 from el_login import Login
 import sqlite3 as sql
-from class_user import User
+from class_user import *
+
+
 
 def get_coins():
     conn = sql.connect('cryptodata.sqlite') 
@@ -26,7 +28,9 @@ def show_graph(coins):
     string = "Which coin do you wish to see:\n"
     for i,coin in enumerate(coins):
         string += f"{i+1}. {coin.get_coin_name()}\n"
-    which_one = input(string)
+    which_one = int_input(string+f"{len(coins)+1}. Leave\n",len(coins)+1)
+    if which_one == len(coins)+1:
+        return 
     coins[int(which_one)-1].draw_graph()
     
 def show_today_prices(coins):
@@ -110,7 +114,9 @@ def do_show_market():
         string += f"{i}. {coin.get_coin_name()}\n"
         i += 1
     
-    which_one = int(input("Which coin do you want to see?\n"+string))
+    which_one = int_input("Which coin do you want to see?\n"+string+f"{len(tabelus)+1}. Leave\n", len(tabelus)+1)
+    if which_one == len(tabelus)+1:
+        return
     how_far_back = input("For how many days bacl do you want to see the changes to the market volumes (if nothing is entered deafult is 364 days): ")
     if how_far_back == "":
         show_market(tabelus[which_one-1])
@@ -129,10 +135,10 @@ def do_login():
         if login.is_user(email):
             break
         else:
-            try_again = input("This email addres is not in our database.\n1. Try again\n2. Leave\n")
-            if int(try_again) == 1:
+            try_again = int_input("This email addres is not in our database.\n1. Try again\n2. Leave\n",2)
+            if try_again == 1:
                 continue
-            if int(try_again) == 2:
+            if try_again == 2:
                 return None
     while True:
         password = input("Enter password: ")
@@ -141,10 +147,10 @@ def do_login():
             print(f"Succesful login! Hello {user.get_username()}. ")
             return user
         else:
-            try_again = input("Incorect password!\n1. Try again\n2. Leave\n")
-            if int(try_again) == 1:
+            try_again = int_input("Incorect password!\n1. Try again\n2. Leave\n",2)
+            if try_again == 1:
                 continue    
-            if int(try_again) == 2:
+            if try_again == 2 or try_again == -1:
                 return None
             
             
@@ -154,18 +160,18 @@ def do_register():
     while True:
         email = input("Enter email adress: ")
         if not login.valid_email(email):
-            try_again = input("This email addres is invalid.\n1. Try again\n2. Leave\n")
-            if int(try_again) == 1:
+            try_again = int_input("This email addres is invalid.\n1. Try again\n2. Leave\n",2)
+            if try_again == 1:
                 continue
-            if int(try_again) == 2:
+            if try_again == 2:
                 return False
         elif not login.is_user(email):
             break
         else:
-            try_again = input("This email addres is already in our database.\n1. Try again\n2. Leave\n")
-            if int(try_again) == 1:
+            try_again = int_input("This email addres is already in our database.\n1. Try again\n2. Leave\n",2)
+            if try_again == 1:
                 continue
-            if int(try_again) == 2:
+            if try_again == 2:
                 return False
     while True:
         password = input("Enter password: ")
@@ -182,7 +188,7 @@ def do_register():
             ass.add_assets(email,money)
             return True
         else:
-            try_again = input(f"Password must contain at least 2 of {what_worng}\n1. Try again\n2. Leave\n")
+            try_again = int_input(f"Password must contain at least 2 of {what_worng}\n1. Try again\n2. Leave\n",2)
             if int(try_again) == 1:
                 continue    
             if int(try_again) == 2:

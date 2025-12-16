@@ -4,6 +4,19 @@ from class_coin import Coin
 from datetime import datetime
 import time
 
+def int_input(string, range = float("inf")):
+    x = input(string)
+    if x.isdecimal() and 0<int(x)<=range:
+        return int(x)
+    else:
+        x = int_input("Invalid input!\n1. Try again\n2. Leave\n",2)
+        if x == 1:
+            return int_input(string,range)
+        if x == 2:
+            return range
+            
+            
+            
 class User:
     def __init__(self, email):
         self.email = email
@@ -80,11 +93,13 @@ class User:
             string += f"{i}. {item[0].get_coin_name()}: {item[1]}\n"
             i += 1
         if id == 0:
-            which_one = int(input("Which coin do you want to sell?\n"+string))
+            which_one = int_input("Which coin do you want to sell?\n"+string+f"{len(tabelus)+1}. Leave\n", len(tabelus)+1)
             how_much = float(input(r"How much do you want to sell (enter an amount in %. The inputed % of the cryptocurrency owned will be sold): "))
         else:
-            which_one = int(input("In which coin do you want to invest?\n"+string))
+            which_one = int_input("In which coin do you want to invest?\n"+string+f"{len(tabelus)+1}. Leave\n", len(tabelus)+1)
             how_much = float(input(r"How much do you want to invest (enter an amount in %. The inputed % of your investable money will be invested): "))
+            if which_one == len(tabelus)+1:
+                return -1
         return (tabelus[which_one-1][0],how_much)
         
         
@@ -136,7 +151,7 @@ class User:
         while True:
             money = float(input("How much do you wish to take out (this money was eaither deposited to the account or acquired through selling): "))
             if not self.change_eur(-money):
-                try_again = input("You cant take out more than you own!\n1. Try again\n2. Leave\n")
+                try_again = int_input("You cant take out more than you own!\n1. Try again\n2. Leave\n", 2)
                 if int(try_again) == 1:
                     continue
                 if int(try_again) == 2:
@@ -148,7 +163,7 @@ class User:
         """
         
         """
-        what_u_doin = int(input("Do you want to sell or buy cryptocurrency?\n1. Buy\n2. Sell\n3. Leave\n"))
+        what_u_doin = int_input("Do you want to sell or buy cryptocurrency?\n1. Buy\n2. Sell\n3. Leave\n",3)
         if what_u_doin == 1:
             coin,how_much_u_wanna_sell = self.data_collect_for_trans(1)
             return self.buy_sell(how_much_u_wanna_sell,1,coin)
@@ -159,5 +174,6 @@ class User:
             return False
         
 
+            
     
             
