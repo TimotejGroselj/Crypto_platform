@@ -74,9 +74,9 @@ class User():
         string = ""
         data = self.check_assets()
         for coin, quant in data.items():
-            item = (i,coin,quant)
+            item = (coin,quant)
             tabelus.append(item)
-            string += f"{item[0]}. {item[1].get_coin_name()}: {item[2]}\n"
+            string += f"{i}. {item[0].get_coin_name()}: {item[1]}\n"
             i += 1
         if id == 0:
             which_one = int(input("Which coin do you want to sell?\n"+string))
@@ -84,7 +84,7 @@ class User():
         else:
             which_one = int(input("In which coin do you want to invest?\n"+string))
             how_much = float(input(r"How much do you want to invest (enter an amount in %. The inputed % of your investable money will be invested): "))
-        return (tabelus[which_one-1][1],how_much)
+        return (tabelus[which_one-1][0],how_much)
         
         
     def buy_sell(self,amount,invest_id,coin:Coin):

@@ -36,7 +36,7 @@ while True:
         break
     
 while cond:
-    what_to_do = input("What do you want to do today?\n1. See todays prices\n2. See a price graph of cryptocurrency\n3. Look at your assets\n4. Deposit money\n5. Take money out\n6. Commit a transaction \n7. Leave\n")
+    what_to_do = input("What do you want to do today?\n1. See todays prices\n2. See a price graph of cryptocurrency\n3. Look at your assets\n4. Look at coin volume changes\n5. Deposit money\n6. Take money out\n7. Commit a transaction \n8. Leave\n")
     if int(what_to_do) == 1:
         show_today_prices(coins)
     if int(what_to_do) == 2:
@@ -44,12 +44,14 @@ while cond:
     if int(what_to_do) == 3:
         user.show_assets()
     if int(what_to_do) == 4:
-        user.deposit()
+        do_show_market()
     if int(what_to_do) == 5:
-        user.take_out()
+        user.deposit()
     if int(what_to_do) == 6:
-        user.do_buy_sell()
+        user.take_out()
     if int(what_to_do) == 7:
+        user.do_buy_sell()
+    if int(what_to_do) == 8:
         break
         
         

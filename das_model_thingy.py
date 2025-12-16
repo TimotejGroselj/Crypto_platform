@@ -35,6 +35,89 @@ def show_today_prices(coins):
         print(f"{i}. {coin.get_coin_name()}:\n\tprice: {coin.get_todays_price()}\n\tchange from yesterday: {round(coin.get_change(),6)}%")
         i += 1
     
+def show_market(coin:Coin, how_far_back = 364):
+    """
+    
+    """
+    conn = sql.connect('cryptodata.sqlite') 
+    with conn:
+        cur = conn.cursor()
+        querry = """
+        SELECT date,quantity FROM transactions
+        WHERE coin_id = ? AND type = 'buy' AND valid = 1
+        ORDER BY date DESC
+        """
+        buying = cur.execute(querry, (coin.get_coin_id(),)).fetchall()
+        
+        querry = """
+        SELECT date,quantity FROM transactions
+        WHERE coin_id = ? AND type = 'sell' AND valid = 1
+        ORDER BY date DESC
+        """
+        selling = cur.execute(querry, (coin.get_coin_id(),)).fetchall()
+
+        querry = """
+        SELECT date FROM coins_prices
+        GROUP BY date
+        ORDER BY date DESC limit ?
+        """
+        dates = cur.execute(querry,(how_far_back,)).fetchall()
+        dates = [el[0] for el in dates]
+        data_for_every_day = dict()
+        for date in dates:
+            data_for_every_day[date] = [0,0]
+            
+        for date,quant in buying:
+            if date in data_for_every_day:
+                data_for_every_day[date][0] +=quant
+
+        for date,quant in selling:
+            if date in data_for_every_day:
+                data_for_every_day[date][1] +=quant
+        
+        
+        print(f"{'Sold volume':<12}{'|':^3}{'Date':^12}{'|':^3}{'Bought volume':<12}")
+        sold_volume = 0
+        bought_volume = 0
+        for i, date in enumerate(dates):
+            sold = data_for_every_day[date][1]
+            bought = data_for_every_day[date][0]
+            sold_volume += sold
+            bought_volume += bought
+            print(f"{round(sold,5):^12}{'|':^3}{date:^12}{'|':^3}{round(bought,5):^12}")
+            if i >=how_far_back:
+                break
+            
+        all_volume = sold_volume+bought_volume
+        if all_volume == 0:
+            print(f"Nothing happend in the last {how_far_back} days")
+        else:
+            sold_volume,bought_volume = (sold_volume/all_volume)*100,(bought_volume/all_volume)*100   
+            print(f"Total market change in the last {how_far_back} days:")
+            print(f"{round(sold_volume,2):>49}% : {round(bought_volume,2)}%")
+            print("-"*int(sold_volume)+"+"*int(bought_volume))
+            
+def do_show_market():
+    """
+    
+    """
+    data = get_coins()
+    tabelus = []
+    i = 1
+    string = ""
+    for coin in data:
+        tabelus.append(coin)
+        string += f"{i}. {coin.get_coin_name()}\n"
+        i += 1
+    
+    which_one = int(input("Which coin do you want to see?\n"+string))
+    how_far_back = input("For how many days bacl do you want to see the changes to the market volumes (if nothing is entered deafult is 364 days): ")
+    if how_far_back == "":
+        show_market(tabelus[which_one-1])
+    else:
+        show_market(tabelus[which_one-1],int(how_far_back))
+    
+    
     
 def do_login():
     """
