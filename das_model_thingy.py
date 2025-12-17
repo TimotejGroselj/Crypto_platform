@@ -117,11 +117,11 @@ def do_show_market():
     which_one = int_input("Which coin do you want to see?\n"+string+f"{len(tabelus)+1}. Leave\n", len(tabelus)+1)
     if which_one == len(tabelus)+1:
         return
-    how_far_back = input("For how many days bacl do you want to see the changes to the market volumes (if nothing is entered deafult is 364 days): ")
-    if how_far_back == "":
-        show_market(tabelus[which_one-1])
+    how_far_back = int_input("For how many days bacl do you want to see the changes to the market volumes (if nothing or invalid is entered deafult is maximum 364 days): ",364)
+    if how_far_back == 364:
+        show_market(tabelus[which_one-1],364)
     else:
-        show_market(tabelus[which_one-1],int(how_far_back))
+        show_market(tabelus[which_one-1],how_far_back)
     
     
     
@@ -180,11 +180,11 @@ def do_register():
             print("Account sucesfully added")
             login.create_user(name,email,password)
             ass = Assets()
-            money = input("How much do you wish to invest right away (write the amount of money in EUR that will be available for later trading): ")
-            if float(money) < 0:
+            money = float_input("How much do you wish to invest right away (write the amount of money in EUR that will be available for later trading, invalid input will result in starting balance 0): ")
+            if money -1:
                 money = 0
             else: 
-                money = float(money) 
+                money = money
             ass.add_assets(email,money)
             return True
         else:

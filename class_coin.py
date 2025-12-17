@@ -93,7 +93,7 @@ class Coin():
             else:
                 difs[0].append(-dif)
                 difs[1].append(0)
-        ax.errorbar(list(le_data.keys())[:-1],list(le_data.values())[:-1],yerr=difs,color = "dodgerblue",ecolor="orangered")
+        ax.errorbar(list(le_data.keys())[:-1],list(le_data.values())[:-1],yerr=difs,color = "lightgreen",ecolor="orangered")
         
         ax_image = fig.add_axes([0.9,0.9,0.1,0.1])
         ax_image.imshow(self.get_coin_img())
