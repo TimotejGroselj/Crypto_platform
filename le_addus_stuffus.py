@@ -4,7 +4,7 @@ from datetime import datetime
 from funkcije_encription import *
 import random
 from updater import *
-from das_data import data,populars
+from das_data import get_data,populars
 
 
 def assign_wallets():
@@ -37,7 +37,7 @@ def fill_coins_table():
         q1 = "SELECT coin_id FROM coins;"
         coinz = cur.execute(q1).fetchall()
         if not coinz:
-            for coin in data:
+            for coin in get_data():
                 q2 = "INSERT INTO coins (coin_id, coin_name, coin_img) VALUES (?,?,?);"
                 cur.execute(q2, [coin['id'], coin['name'], coin['image']])
     return None

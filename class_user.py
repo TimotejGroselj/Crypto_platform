@@ -3,6 +3,47 @@ from funkcije_encription import *
 from class_coin import Coin
 from datetime import datetime
 import time
+import re
+
+def int_input(string, range = float("inf")):
+    while True:
+        x = input(string)
+        if x.isdecimal() and 0<int(x)<=range:
+            return int(x)
+        else:
+            while True:
+                x = input("Invalid input!\n1. Try again\n2. Leave\n")
+                if x.isdecimal() and int(x) == 1:
+                    break
+                elif x.isdecimal() and int(x) == 2:
+                    return range
+                
+def is_float(string):
+    """
+    
+    """
+    try:
+        if float(string)>0:
+            return True
+        else:
+            return False
+    except:
+        return False
+def float_input(string):
+    """
+    
+    """
+    while True:
+        x = input(string)
+        if is_float(x):
+            return float(x)
+        else:
+            while True:
+                x = input("Invalid input!\n1. Try again\n2. Leave\n")
+                if x.isdecimal() and int(x) == 1:
+                    break
+                elif x.isdecimal() and int(x) == 2:
+                    return 0
 
 class User:
     def __init__(self, email):
@@ -75,17 +116,21 @@ class User:
         string = ""
         data = self.check_assets()
         for coin, quant in data.items():
-            item = (i,coin,quant)
+            item = (coin,quant)
             tabelus.append(item)
-            string += f"{item[0]}. {item[1].get_coin_name()}: {item[2]}\n"
+            string += f"{i}. {item[0].get_coin_name()}: {item[1]}\n"
             i += 1
         if id == 0:
-            which_one = int(input("Which coin do you want to sell?\n"+string))
-            how_much = float(input(r"How much do you want to sell (enter an amount in %. The inputed % of the cryptocurrency owned will be sold): "))
+            which_one = int_input("Which coin do you want to sell?\n"+string+f"{len(tabelus)+1}. Leave\n", len(tabelus)+1)
+            if which_one == len(tabelus)+1:
+                return (-1,-1)
+            how_much = float_input(r"How much do you want to sell (enter an amount in %. The inputed % of the cryptocurrency owned will be sold, invalid input will set this to 0): ")
         else:
-            which_one = int(input("In which coin do you want to invest?\n"+string))
-            how_much = float(input(r"How much do you want to invest (enter an amount in %. The inputed % of your investable money will be invested): "))
-        return (tabelus[which_one-1][1],how_much)
+            which_one = int_input("In which coin do you want to invest?\n"+string+f"{len(tabelus)+1}. Leave\n", len(tabelus)+1)
+            if which_one == len(tabelus)+1:
+                return (-1,-1)
+            how_much = float_input(r"How much do you want to invest (enter an amount in %. The inputed % of your investable money will be invested, invalid input will set this to 0): ")
+        return (tabelus[which_one-1][0],how_much)
         
         
     def buy_sell(self,amount,invest_id,coin:Coin):
@@ -99,7 +144,7 @@ class User:
                 (wallet_id,coin_id,quantity,date,valid,type)
                 VALUES(?,?,?,?,?,?)
                 """
-                self.cur.execute(querry,(id_to_hash(self.id),coin.get_coin_id(),amount,datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d"),0,"sell" if invest_id==0 else "buy"))
+                self.cur.execute(querry,(id_to_hash(self.id),coin.get_coin_id(),amount*self.check_assets()[Coin("EUR")]/100,datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d"),0,"sell" if invest_id==0 else "buy"))
                 return False
             eur = self.cur.execute("SELECT money FROM assets WHERE wallet_id = ? AND coin_id = 'EUR';", [id_to_hash(self.id)]).fetchone()[0]
             coin_currently = self.cur.execute("SELECT money FROM assets WHERE wallet_id = ? AND coin_id = ?", [id_to_hash(self.id),coin.get_coin_id()]).fetchone()[0]
@@ -121,7 +166,7 @@ class User:
             (wallet_id,coin_id,quantity,date,valid,type)
             VALUES(?,?,?,?,?,?)
             """
-            self.cur.execute(querry,(id_to_hash(self.id),coin.get_coin_id(),amount,datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d"),1,"sell" if invest_id==0 else "buy"))
+            self.cur.execute(querry,(id_to_hash(self.id),coin.get_coin_id(),eur*amount/100 if invest_id == 1 else (coin_currently*(amount/100))*coin_price,datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d"),1,"sell" if invest_id==0 else "buy"))
         return True
 
 
@@ -129,14 +174,14 @@ class User:
     
     ### funkcije za pobiranje podatku od userja 
     def deposit(self):
-        money = input("How much do you wish to deposit (this money will be available for commiting transactions): ")
-        self.change_eur(float(money))
+        money = float_input("How much do you wish to deposit (this money will be available for commiting transactions, invalid input will set this to 0): ")
+        self.change_eur(money)
         
     def take_out(self):
         while True:
-            money = float(input("How much do you wish to take out (this money was eaither deposited to the account or acquired through selling): "))
+            money = float_input("How much do you wish to take out (this money was eaither deposited to the account or acquired through selling, invalid input will set this to 0): ")
             if not self.change_eur(-money):
-                try_again = input("You cant take out more than you own!\n1. Try again\n2. Leave\n")
+                try_again = int_input("You cant take out more than you own!\n1. Try again\n2. Leave\n", 2)
                 if int(try_again) == 1:
                     continue
                 if int(try_again) == 2:
@@ -148,16 +193,21 @@ class User:
         """
         
         """
-        what_u_doin = int(input("Do you want to sell or buy cryptocurrency?\n1. Buy\n2. Sell\n3. Leave\n"))
+        what_u_doin = int_input("Do you want to sell or buy cryptocurrency?\n1. Buy\n2. Sell\n3. Leave\n",3)
         if what_u_doin == 1:
             coin,how_much_u_wanna_sell = self.data_collect_for_trans(1)
+            if coin == -1:
+                return False
             return self.buy_sell(how_much_u_wanna_sell,1,coin)
         if what_u_doin == 2:
             coin,how_much_u_wanna_sell = self.data_collect_for_trans(0)
+            if coin == -1:
+                return False
             return self.buy_sell(how_much_u_wanna_sell,0,coin)
         if what_u_doin == 3:
             return False
         
 
+            
     
             

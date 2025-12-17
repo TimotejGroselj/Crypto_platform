@@ -68,13 +68,22 @@ class Coin():
         fig, ax = plt.subplots()
         fig.set_figwidth(15)
         fig.set_figheight(7)
-        fig.set_facecolor("dimgray")
-        ax.set_facecolor("dimgray")
+        fig.set_facecolor("black")
+        ax.set_facecolor("black")
         #ax.imshow(we decide le backround image)
-        ax.plot(le_data.keys(), le_data.values(),color = "dodgerblue")#določva barvo glede na ozadje
-        ax.set_xticks(range(0,len(le_data), len(le_data)//5))
+        ax.set_xticks(range(0,len(le_data), len(le_data)//12))
         ax.set_xlabel("date")
         ax.set_ylabel("EUR per coin")#to poprav ce se ti ne zdi prou
+        
+        ax.xaxis.label.set_color('white')        
+        ax.yaxis.label.set_color('white')          
+        ax.tick_params(axis='x', colors='white')    
+        ax.tick_params(axis='y', colors='white')  
+        ax.spines['left'].set_color('white')        
+        ax.spines['top'].set_color('white')       
+        ax.spines['right'].set_color('white')        
+        ax.spines['bottom'].set_color('white')     
+          
         difs = [[],[]]
         for i in range(len(le_data.values())-1):
             dif = list(le_data.values())[i+1]-list(le_data.values())[i]
@@ -84,15 +93,18 @@ class Coin():
             else:
                 difs[0].append(-dif)
                 difs[1].append(0)
-        ax.errorbar(list(le_data.keys())[:-1],list(le_data.values())[:-1],yerr=difs,color = "blue",ecolor="red")
+        ax.errorbar(list(le_data.keys())[:-1],list(le_data.values())[:-1],yerr=difs,color = "lightgreen",ecolor="orangered")
         
         ax_image = fig.add_axes([0.9,0.9,0.1,0.1])
         ax_image.imshow(self.get_coin_img())
         ax_image.axis("off")
         #le_font = nasledn text kopiran iz offical website tko da veva iz kje dobiva font Matplotlib also provides an option to offload text rendering to a TeX engine (usetex=True), see Text rendering with LaTeX.
         #also link: https://matplotlib.org/stable/users/explain/text/usetex.html#usetex
-        ax.text(1.01,0.95,f"latest price\n{round(self.get_prices()[max(self.get_prices().keys())],6)}",transform=ax.transAxes)
-        ax.text(1.01,0.85,f"best price\n{round(max(self.get_prices().values()),6)}",transform=ax.transAxes)
+        latest = self.get_prices()[max(self.get_prices().keys())]
+        best = max(self.get_prices().values())
+        dif = (best/latest)*100
+        ax.text(1.01,0.90,f"latest price\n{round(latest,6)}\n-{round(dif,2)}% from best",transform=ax.transAxes,color = "red")
+        ax.text(1.01,0.80,f"best price\n{round(best,6)}",transform=ax.transAxes, color = "green")
         #i can add abunch more stuff sam mi mors povedat kaj bi zgledal kulll pa prav za pc spletno stran
         plt.show()
         
