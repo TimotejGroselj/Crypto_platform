@@ -3,6 +3,7 @@ from funkcije_encription import *
 from class_coin import Coin
 from datetime import datetime
 import time
+import re
 
 def int_input(string, range = float("inf")):
     while True:
@@ -17,10 +18,34 @@ def int_input(string, range = float("inf")):
                 elif x.isdecimal() and int(x) == 2:
                     return range
                 
+def is_float(string):
+    """
+    
+    """
+    try:
+        if float(string)>0:
+            return True
+        else:
+            return False
+    except:
+        return False
+def float_input(string):
+    """
+    
+    """
+    while True:
+        x = input(string)
+        if is_float(x):
+            return float(x)
+        else:
+            while True:
+                x = input("Invalid input!\n1. Try again\n2. Leave\n")
+                if x.isdecimal() and int(x) == 1:
+                    break
+                elif x.isdecimal() and int(x) == 2:
+                    return -1
             
-            
-            
-            
+print(float_input("napiš neki"))
 class User:
     def __init__(self, email):
         self.email = email
