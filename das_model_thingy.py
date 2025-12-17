@@ -131,11 +131,11 @@ def do_login():
     """
     login = Login()
     while True:
-        email = input("Enter email adress: ")
+        email = input("Enter email address: ")
         if login.is_user(email):
             break
         else:
-            try_again = int_input("This email addres is not in our database.\n1. Try again\n2. Leave\n",2)
+            try_again = int_input("This email address is not in our database.\n1. Try again\n2. Leave\n",2)
             if try_again == 1:
                 continue
             if try_again == 2:
@@ -144,7 +144,7 @@ def do_login():
         password = input("Enter password: ")
         if login.valid_login(email,password):
             user = User(email)
-            print(f"Succesful login! Hello {user.get_username()}. ")
+            print(f"Successful login! Hello {user.get_username()}. ")
             return user
         else:
             try_again = int_input("Incorect password!\n1. Try again\n2. Leave\n",2)
