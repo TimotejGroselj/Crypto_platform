@@ -11,7 +11,7 @@ with conn:
     trans_id integer PRIMARY KEY,
 	wallet_id VARCHAR(50),
     coin_id VARCHAR(15),
-    quantity numeric(15,6) CHECK (quantity > 0),
+    quantity numeric(15,6),
     date date NOT NULL,
     valid integer CHECK (valid in (0,1)),
     type VARCHAR(4) CHECK (type in ('buy','sell'))

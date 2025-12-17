@@ -122,12 +122,14 @@ class User:
             i += 1
         if id == 0:
             which_one = int_input("Which coin do you want to sell?\n"+string+f"{len(tabelus)+1}. Leave\n", len(tabelus)+1)
+            if which_one == len(tabelus)+1:
+                return (-1,-1)
             how_much = float_input(r"How much do you want to sell (enter an amount in %. The inputed % of the cryptocurrency owned will be sold, invalid input will set this to 0): ")
         else:
             which_one = int_input("In which coin do you want to invest?\n"+string+f"{len(tabelus)+1}. Leave\n", len(tabelus)+1)
-            how_much = float_input(r"How much do you want to invest (enter an amount in %. The inputed % of your investable money will be invested, invalid input will set this to 0): ")
             if which_one == len(tabelus)+1:
-                return -1
+                return (-1,-1)
+            how_much = float_input(r"How much do you want to invest (enter an amount in %. The inputed % of your investable money will be invested, invalid input will set this to 0): ")
         return (tabelus[which_one-1][0],how_much)
         
         
@@ -142,7 +144,7 @@ class User:
                 (wallet_id,coin_id,quantity,date,valid,type)
                 VALUES(?,?,?,?,?,?)
                 """
-                self.cur.execute(querry,(id_to_hash(self.id),coin.get_coin_id(),amount*self.check_assets()[Coin("EUR")],datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d"),0,"sell" if invest_id==0 else "buy"))
+                self.cur.execute(querry,(id_to_hash(self.id),coin.get_coin_id(),amount*self.check_assets()[Coin("EUR")]/100,datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d"),0,"sell" if invest_id==0 else "buy"))
                 return False
             eur = self.cur.execute("SELECT money FROM assets WHERE wallet_id = ? AND coin_id = 'EUR';", [id_to_hash(self.id)]).fetchone()[0]
             coin_currently = self.cur.execute("SELECT money FROM assets WHERE wallet_id = ? AND coin_id = ?", [id_to_hash(self.id),coin.get_coin_id()]).fetchone()[0]
@@ -164,7 +166,7 @@ class User:
             (wallet_id,coin_id,quantity,date,valid,type)
             VALUES(?,?,?,?,?,?)
             """
-            self.cur.execute(querry,(id_to_hash(self.id),coin.get_coin_id(),amount,datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d"),1,"sell" if invest_id==0 else "buy"))
+            self.cur.execute(querry,(id_to_hash(self.id),coin.get_coin_id(),eur*amount/100 if invest_id == 1 else (coin_currently*(amount/100))*coin_price,datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d"),1,"sell" if invest_id==0 else "buy"))
         return True
 
 
@@ -194,9 +196,13 @@ class User:
         what_u_doin = int_input("Do you want to sell or buy cryptocurrency?\n1. Buy\n2. Sell\n3. Leave\n",3)
         if what_u_doin == 1:
             coin,how_much_u_wanna_sell = self.data_collect_for_trans(1)
+            if coin == -1:
+                return False
             return self.buy_sell(how_much_u_wanna_sell,1,coin)
         if what_u_doin == 2:
             coin,how_much_u_wanna_sell = self.data_collect_for_trans(0)
+            if coin == -1:
+                return False
             return self.buy_sell(how_much_u_wanna_sell,0,coin)
         if what_u_doin == 3:
             return False
