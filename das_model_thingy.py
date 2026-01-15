@@ -4,7 +4,7 @@ from el_assetso import Assets
 from el_login import Login
 import sqlite3 as sql
 from class_user import *
-
+from inputs import *
 
 
 def get_coins():

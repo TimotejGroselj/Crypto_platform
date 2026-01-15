@@ -4,46 +4,8 @@ from class_coin import Coin
 from datetime import datetime
 import time
 import re
+from inputs import *
 
-def int_input(string, range = float("inf")):
-    while True:
-        x = input(string)
-        if x.isdecimal() and 0<int(x)<=range:
-            return int(x)
-        else:
-            while True:
-                x = input("Invalid input!\n1. Try again\n2. Leave\n")
-                if x.isdecimal() and int(x) == 1:
-                    break
-                elif x.isdecimal() and int(x) == 2:
-                    return range
-                
-def is_float(string):
-    """
-    
-    """
-    try:
-        if float(string)>0:
-            return True
-        else:
-            return False
-    except:
-        return False
-def float_input(string):
-    """
-    
-    """
-    while True:
-        x = input(string)
-        if is_float(x):
-            return float(x)
-        else:
-            while True:
-                x = input("Invalid input!\n1. Try again\n2. Leave\n")
-                if x.isdecimal() and int(x) == 1:
-                    break
-                elif x.isdecimal() and int(x) == 2:
-                    return 0
 
 class User:
     def __init__(self, email):
@@ -174,12 +136,12 @@ class User:
     
     ### funkcije za pobiranje podatku od userja 
     def deposit(self):
-        money = float_input("How much do you wish to deposit (this money will be available for commiting transactions, invalid input will set this to 0): ")
+        money = float_input("How much do you wish to deposit: ")
         self.change_eur(money)
         
     def take_out(self):
         while True:
-            money = float_input("How much do you wish to take out (this money was eaither deposited to the account or acquired through selling, invalid input will set this to 0): ")
+            money = float_input("How much do you wish to take out (this money was eaither deposited to the account or acquired through selling): ")
             if not self.change_eur(-money):
                 try_again = int_input("You cant take out more than you own!\n1. Try again\n2. Leave\n", 2)
                 if int(try_again) == 1:
