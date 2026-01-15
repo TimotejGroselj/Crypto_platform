@@ -9,7 +9,7 @@ class Assets:
 
     def add_assets(self,email,eur):
         """Za novega uporabnika ustvari kripto denarnico"""
-        if eur <= 0: raise ValueError("EUR must be greater than 0")
+        if eur < 0: raise ValueError("EUR must be greater than 0")
         q1 = "SELECT user_id FROM users WHERE email = ?"
         id = self.cur.execute(q1,[email]).fetchone()[0]
         hash = id_to_hash(id)
