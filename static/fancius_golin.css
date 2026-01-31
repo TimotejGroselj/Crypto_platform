@@ -88,6 +88,18 @@ button:hover {
     font-weight: 500;
 }
 
+.incorrect-input {
+    margin-top: 18px;
+    font-size: 14px;
+    color: rgb(220, 53, 69);
+}
+
+.incorrect-input a{
+    color: rgb(13, 110, 253);
+    text-decoration: none;
+    font-weight: 500;
+}
+
 .register-text a:hover {
     text-decoration: underline;
 }
