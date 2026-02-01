@@ -4,7 +4,7 @@ from el_assetso import Assets
 from el_login import Login
 import sqlite3 as sql
 from class_user import *
-
+from inputs import *
 
 
 def get_coins():
@@ -177,14 +177,14 @@ def do_register():
         password = input("Enter password: ")
         what_worng = login.valid_password(password)
         if what_worng == None:
-            print("Account sucesfully added")
-            login.create_user(name,email,password)
             ass = Assets()
             money = float_input("How much do you wish to invest right away (write the amount of money in EUR that will be available for later trading, invalid input will result in starting balance 0): ")
-            if money -1:
+            if money < 0:
                 money = 0
             else: 
-                money = money
+                money = float(money)
+            print("Account sucesfully added")
+            login.create_user(name,email,password)
             ass.add_assets(email,money)
             return True
         else:

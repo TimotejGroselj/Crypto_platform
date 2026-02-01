@@ -5,7 +5,7 @@ from el_login import Login
 import os
 from updater import *
 from das_model_thingy import * #tuki so vse funkcije ki jih tle uporablaš tuki NE SMEVA KLICAT NČ SQL
-from class_user import int_input
+from inputs import *
 
 if not os.path.exists("cryptodata.sqlite"):
     subprocess.run(["python","generato_uporabnik.py"])
@@ -22,6 +22,7 @@ for coin in coins:
 
 print("Hello user!")
 print("Most of the user interface is done with the use of numbers. Just enter the number next to the option you wish to do if there is a number.")
+
 cond = True
 while True:
     is_user = int_input("Do you already have an account?\n1. Yes\n2. No\n3. Leave\n", 3)
