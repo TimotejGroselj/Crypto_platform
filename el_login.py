@@ -20,6 +20,7 @@ class Login:
     def is_user(self,email):
         """Preveri, če uporabnik že obstaja v bazi"""
         return self.cur.execute('SELECT username FROM users WHERE email = ?',[email,]).fetchone() != None
+
     def valid_email(self,email):
         """
         preveri če je mail valid
@@ -33,7 +34,7 @@ class Login:
         """
         preveri če je geslo valid
         """
-        strong_password = {'lowercase':0,'uppercase':0,'digit':0,'special':0}
+        strong_password = {'lowercase':0,'uppercase':0,'digit':0}
         for i in password:
             if 'a' <= i <= 'z':
                 strong_password['lowercase'] += 1
@@ -41,20 +42,24 @@ class Login:
                 strong_password['uppercase'] += 1
             if '0' <= i <= '9':
                 strong_password['digit'] += 1
-            else:
-                strong_password['special'] += 1
         for key,item in strong_password.items():
             if item < 2:
                 return key
         return None
-            
-            
-    def create_user(self,username,email,password=""): #tuki mors se generatat assets zanga
-        """Ustvari uporabniški profil"""
-        if password == "":
-            for i in range(10):
-                letter = random.choice(string.printable)
+
+    def generate_password(self):
+        password = "a"
+        while self.valid_password(password) is not None:
+            password = ""
+            for i in range(5):
+                letter = random.choice(string.ascii_letters)
+                letter += random.choice(string.digits)
                 password += letter
+        return password
+            
+            
+    def create_user(self,username,email,password): #tuki mors se generatat assets zanga
+        """Ustvari uporabniški profil"""
         with self.conn:
             q1 = "INSERT INTO users (username, email, password) VALUES (?,?,?)"
             self.cur.execute(q1,[username,email,id_to_hash(password)])

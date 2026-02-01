@@ -76,7 +76,7 @@ class User:
     ### funkcije za spremembe direkt u sql
     def add_assets(self,eur):
         """Za novega uporabnika ustvari kripto denarnico"""
-        if eur <= 0: raise ValueError("EUR must be greater than 0")
+        if eur <= 0: raise ValueError(f"EUR must be greater than 0: {eur}")
         q1 = "SELECT user_id FROM users WHERE email = ?"
         id = self.cur.execute(q1,[self.email]).fetchone()[0]
         hash = id_to_hash(id)

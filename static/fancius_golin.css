@@ -33,7 +33,7 @@ body {
 }
 
 .input-group {
-    margin-bottom: 20px;
+    margin-bottom: 17px;
 }
 
 .input-group input {
@@ -89,7 +89,8 @@ button:hover {
 }
 
 .incorrect-input {
-    margin-top: 18px;
+    display: block;
+    margin-bottom: 10px;
     font-size: 14px;
     color: rgb(220, 53, 69);
 }
