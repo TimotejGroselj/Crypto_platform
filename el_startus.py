@@ -29,7 +29,7 @@ def login_logic():
     #    return template('login', error='Incorrect password!', email=email, password=None)
     user = 'GOVEDO JEDNO'
     #user = User(email).get_username()
-    return redirect(f"/dashboard?name={user}")
+    return redirect(f"/greet?name={user}")
 
 
 @route("/register")
@@ -61,9 +61,17 @@ def register_logic():
     return template("login",error=None,email=email,password=None)
 
 
-@route('/dashboard')
+@route('/greet')
 def dashboard():
     name = request.query.get('name')
     return template("success",name=name)
+
+@route('/dashboard')
+def show_dashboard():
+    return template("dashboard")
+
+@route("/dashboard", method='POST')
+def dashboard_logic():
+    return None
 
 run(host='localhost', port=8080, debug=True)
