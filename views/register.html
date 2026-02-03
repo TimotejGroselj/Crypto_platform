@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link rel="stylesheet" href="/static/fancius_golin.css" />
+</head>
+<body>
+<div class="login-box">
+    <h2>Register</h2>
+    <form method="post" action="/register">
+        <div class="input-group">
+            <input type="text" name = "username" placeholder="Username" required value = "{{username or ''}}" />
+        </div>
+        <div class="input-group">
+            <input type="text" name = "email" placeholder="Email" required value="{{email or ''}}" />
+        </div>
+        % if error == 'Please insert a valid email!':
+            <p class="incorrect-input">{{error}}</p>
+        % end
+        % if error == 'User with that email already exists!':
+            <p class="incorrect-input">{{error}}</p>
+        % end
+        <div class="input-group">
+            <input type="text" name = "password" placeholder="Password" value = "{{password or ''}}" required/>
+        </div>
+        % if error == 'Chose a stronger password!':
+            <p class="incorrect-input">{{error}}</p>
+        % end
+        <div class="input-group">
+            <input type="text" name = "confirm_password" placeholder="Confirm password" required />
+        </div>
+        % if error == 'Passwords do not match!':
+            <p class="incorrect-input">{{error}}</p>
+        % end
+        <div class="input-group">
+            <input type="number" name = "assets" placeholder="Add assets" required min="1"/>
+        </div>
+        <button type="submit">Sign Up</button>
+    </form>
+</div>
+</body>
+</html>
