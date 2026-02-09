@@ -96,4 +96,6 @@ def logout():
     response.delete_cookie('session_id')
     redirect("/")
 
-run(host='localhost', port=8080, debug=True)
+#run(host='192.168.1.9', port=8080, debug=True)
+run(host='127.0.0.1', port=8080, debug=True)
+#192.168.1.15
