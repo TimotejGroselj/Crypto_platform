@@ -1,6 +1,8 @@
 from bottle import route, run, template, static_file, request, redirect, response
 from el_login import *
 from class_user import *
+from das_model_thingy import *
+from class_coin import Coin
 import uuid
 
 sessions = {}
@@ -80,8 +82,15 @@ def greet():
 
 @route('/dashboard')
 def show_dashboard():
-    check_session()
-    return template("dashboard")
+    email = check_session()
+    user = User(email)
+    coins = get_coins()
+    box_el = dict()
+    for coin in coins:
+        coin:Coin
+        box_el[coin.get_coin_id()] = dict(logo =  coin.get_coin_img(), name = coin.get_coin_name(), price = coin.get_todays_price(),change = coin.get_change())
+
+    return template("dashboard", box_el = box_el)
 
 @route("/dashboard", method='POST')
 def dashboard_logic():
