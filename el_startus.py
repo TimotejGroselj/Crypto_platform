@@ -6,6 +6,7 @@ from updater import *
 from class_coin import Coin
 import uuid
 from PIL import Image
+import os
 sessions = {}
 def check_session():
     """Preveri če ima user trenutno sejo"""
@@ -19,6 +20,11 @@ def check_session():
 def static_files(filename):
     """Ovaj za css fileje"""
     return static_file(filename, root='./static')
+
+@route('/temp/<filename>')
+def temp(filename):
+    """Ovaj za css fileje"""
+    return static_file(filename, root='./temp')
 
 @route('/')
 def show_login():
@@ -92,8 +98,7 @@ def show_dashboard():
     box_el = dict()
     for coin in coins:
         coin:Coin
-        coin.get_coin_img().save(f"static/{coin.get_coin_id()}_logo.png")
-        box_el[coin.get_coin_id()] = dict(logo =  f"static/{coin.get_coin_id()}_logo.png", name = coin.get_coin_name(), price = coin.get_todays_price(),change = coin.get_change())
+        box_el[coin.get_coin_id()] = dict(logo = coin.get_coin_img_url(), name = coin.get_coin_name(), price = coin.get_todays_price(),change = coin.get_change())
         
     return template("dashboard", box_el = box_el)
 
@@ -108,6 +113,8 @@ def logout():
     if session_id in sessions:
         del sessions[session_id]
     response.delete_cookie('session_id')
+    for pic in os.listdir("temp"):
+        os.remove(f"temp/{pic}")
     redirect("/")
     
 @route("/coin/<coin_id>")
