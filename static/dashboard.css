@@ -99,3 +99,9 @@ body {
   height: 20px;
   margin-right: 8px;
 }
+
+.coin-graph {
+  display: block;
+  margin: auto;
+  background: none;
+}
