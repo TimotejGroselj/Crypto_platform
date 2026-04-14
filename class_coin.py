@@ -63,7 +63,7 @@ class Coin():
         img = Image.open(io.BytesIO(requests.get(self.coin_img).content)) #i have searched the stack exchange for an hour to find this bad boi
         return img
 
-    def draw_graph(self):
+    def make_graph(self):
         le_data = self.get_prices()
         fig, ax = plt.subplots()
         fig.set_figwidth(15)
@@ -106,5 +106,11 @@ class Coin():
         ax.text(1.01,0.90,f"latest price\n{round(latest,6)}\n-{round(dif,2)}% from best",transform=ax.transAxes,color = "red")
         ax.text(1.01,0.80,f"best price\n{round(best,6)}",transform=ax.transAxes, color = "green")
         #i can add abunch more stuff sam mi mors povedat kaj bi zgledal kulll pa prav za pc spletno stran
-        plt.show()
+        plt.savefig(f"static/{self.coin_id}.png",bbox_inches='tight',facecolor=fig.get_facecolor())
+        plt.close()
+    
+    def draw_graph(self):
+        self.make_graph()
+        img = Image.open(f"static/{self.coin_id}.png")
+        img.show()
         

@@ -22,7 +22,16 @@
 
   %for coin_id,data in box_el.items():
   <div class = "coinstat">
-      {{data["name"]}}, {{data["price"]}}, {{data["change"]}}
+      <button class="coin-select" onclick="location.href='/coin/{{coin_id}}'">
+          <img src="{{data['logo']}}" class="coin-logo">
+          <h1>{{data["name"]}}</h1>
+          Price today: 
+          %if 0 > data["change"]:
+              <span style="color: rgb(255, 0, 0);">{{round(data["price"], 2)}}$ </span>
+          % else:
+              <span style="color: green;">{{round(data["price"], 2)}}$</span>
+          % end
+      </button>
   </div>
   % end
 

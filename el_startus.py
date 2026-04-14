@@ -5,7 +5,7 @@ from das_model_thingy import *
 from updater import *
 from class_coin import Coin
 import uuid
-
+from PIL import Image
 sessions = {}
 def check_session():
     """Preveri če ima user trenutno sejo"""
@@ -92,8 +92,9 @@ def show_dashboard():
     box_el = dict()
     for coin in coins:
         coin:Coin
-        box_el[coin.get_coin_id()] = dict(logo =  coin.get_coin_img(), name = coin.get_coin_name(), price = coin.get_todays_price(),change = coin.get_change())
-
+        coin.get_coin_img().save(f"static/{coin.get_coin_id()}_logo.png")
+        box_el[coin.get_coin_id()] = dict(logo =  f"static/{coin.get_coin_id()}_logo.png", name = coin.get_coin_name(), price = coin.get_todays_price(),change = coin.get_change())
+        
     return template("dashboard", box_el = box_el)
 
 @route("/dashboard", method='POST')
@@ -108,6 +109,13 @@ def logout():
         del sessions[session_id]
     response.delete_cookie('session_id')
     redirect("/")
+    
+@route("/coin/<coin_id>")
+def show_coin(coin_id):
+    check_session()
+    coin = Coin(coin_id)
+    coin.make_graph()
+    return template("coin", coin_id=coin_id)
 
 #run(host='192.168.1.9', port=8080, debug=True)
 run(host='127.0.0.1', port=8080, debug=True)
