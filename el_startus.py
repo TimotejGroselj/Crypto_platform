@@ -2,6 +2,7 @@ from bottle import route, run, template, static_file, request, redirect, respons
 from el_login import *
 from class_user import *
 from das_model_thingy import *
+from updater import *
 from class_coin import Coin
 import uuid
 
@@ -85,6 +86,9 @@ def show_dashboard():
     email = check_session()
     user = User(email)
     coins = get_coins()
+    for coin in coins:
+        if not is_updated(coin.get_coin_id()):
+                update_coins_prices(coin.get_coin_id())
     box_el = dict()
     for coin in coins:
         coin:Coin
