@@ -100,16 +100,24 @@ def show_dashboard():
         coin:Coin
         market_change = show_market(coin, 1)
         box_el[coin.get_coin_id()] = dict(logo = coin.get_coin_img_url(), name = coin.get_coin_name(), price = coin.get_todays_price(),change = coin.get_change(), market_change = market_change)
-    
+    transactions = user.all_transactions()
 
 
-    return template("dashboard", box_el = box_el)
+    return template("dashboard", box_el = box_el, transactions = transactions)
 
 @route("/dashboard", method='POST')
 def dashboard_logic():
     check_session()
-    return None
-
+    action = request.forms.get('type')
+    coin_id = request.forms.get('coin')
+    amount = float(request.forms.get('amount'))
+    doit = request.forms.get('doit')
+    user = User(sessions[request.cookies.get('session_id')])
+    
+    
+    
+    
+    
 @route("/logout")
 def logout():
     session_id = request.cookies.get('session_id')

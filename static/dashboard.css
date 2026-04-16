@@ -64,7 +64,7 @@ body {
   background: none;
   padding: 8px 15px;
   font-weight: 50;
-  font-size: small;
+  font-size: medium;
   color: #f0b90b ;
 }
 
@@ -83,7 +83,7 @@ body {
   width: 100%;
   padding: 8px 15px;
   font-weight: 50;
-  font-size: small;
+  font-size: medium;
   color: #f0b90b ;
 }
 
@@ -107,7 +107,7 @@ body {
 }
 
 .market-change {
-  width: 100%;
+  width: 55%;
   height: 20px;
   background-color: red;
   border-radius: 0%;
@@ -120,4 +120,27 @@ body {
 .market-change::-webkit-progress-value {
   background-color: green;
   border-radius: 0%;
+}
+
+.transaction-history {
+  background: none;
+  color: #f0b90b;
+  padding: 8px 15px;
+  font-size: medium;
+}
+.transaction-history table {
+  width: 16%;
+  border-collapse: collapse;
+  color: #f0b90b;
+  font-size: small;
+}
+
+.transaction-history th, .transaction-history td {
+  border: 1px solid #f0b90b;
+  padding: 8px;
+  text-align: left;
+}
+
+.type {
+  color: #f0b90b;
 }

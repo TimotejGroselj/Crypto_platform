@@ -25,23 +25,71 @@
       <button class="coin-select" onclick="location.href='/coin/{{coin_id}}'">
           <img src="{{data['logo']}}" class="coin-logo">
           <h1>{{data["name"]}}</h1>
-          Price today: 
+          Price: 
           %if 0 > data["change"]:
-              <span style="color: rgb(255, 0, 0);">{{round(data["price"], 2)}}$ </span>
+              <span style="color: rgb(255, 0, 0);">{{round(data["price"], 2)}} -{{round(data["change"]/data["price"] * 100, 2)}}%</span>
           % else:
-              <span style="color: green;">{{round(data["price"], 2)}}$</span>
+              <span style="color: green;">{{round(data["price"], 2)}} +{{round(data["change"]/data["price"] * 100, 2)}}%</span>
           % end
           <br>
-          <label for="market-change">market change in the last 24h:</label>
+          <label for="market-change">market change 24h:</label>
+          <span style="color: green; font-size: small;">bought</span>
           <progress class = "market-change" id="market-change" value="{{data['market_change'][list(data['market_change'].keys())[0]][0]}}" max="100"> </progress>
-
+          <span style="color: red; font-size: small;">sold</span>
       </button>
   </div>
   % end
+</div>
+<!--
+<div class = "transaction-history">
+  <h2>Transaction History</h2>
+  <table class="transaction-history">
+    <tr>
+      <th>date</th>
+      <th>coin</th>
+      <th>amount</th>
+      <th>type</th>
+    </tr>
+    %for transaction in transactions:
+    <tr>
+      <td>{{transaction[2]}}</td>
+      <td>{{transaction[0]}}</td>
+      <td>{{round(transaction[1], 2)}}</td>
+      <td>{{transaction[3]}}</td>
+    </tr>
+    % end
+  </table>
+</div>
+-->
+  
+<label for="type">Action:</label>
+<input type="radio" name="type" value="1">
+  <label for="type">buy</label>
+  <input type="radio" name="type" value="2">
+  <label for="type">sell</label>
+</input>
 
+<label style="color: #f0b90b;" for="coin">Coin:</label>
+
+%for coin_id,data in box_el.items():
+<input type="radio" name="coin" value="{{coin_id}}">
+  <label for="coin">{{data["name"]}}</label>
+  % end
+</input>
+
+<div class="amount">
+  <input type="range" min="0" max="100" value="50" class="slider" id="amount">
 </div>
 
-  
+<div>
+<button class="doit">Execute Transaction</button>
+</div>
+
+
+
+
+
+
 
 
 

@@ -78,10 +78,14 @@ class User:
         string = ""
         data = self.check_assets()
         for coin, quant in data.items():
+            if coin.get_coin_id() == "EUR":
+                balance = quant
+                continue
             item = (coin,quant)
             tabelus.append(item)
             string += f"{i}. {item[0].get_coin_name()}: {item[1]}\n"
             i += 1
+        print(f"Your balance: {balance} EUR")
         if id == 0:
             which_one = int_input("Which coin do you want to sell?\n"+string+f"{len(tabelus)+1}. Leave\n", len(tabelus)+1)
             if which_one == len(tabelus)+1:
@@ -169,6 +173,14 @@ class User:
         if what_u_doin == 3:
             return False
         
+        
+    def all_transactions(self):
+        q1 = "SELECT coin_id,quantity,date,type FROM transactions WHERE wallet_id = ? AND valid = 1 ORDER BY date DESC"
+        data = self.cur.execute(q1,[id_to_hash(self.id)]).fetchall()
+        transactions = []
+        for coin_id,quantity,date,type in data:
+            transactions.append((Coin(coin_id).get_coin_name(),quantity,date,type))
+        return transactions
 
             
     
