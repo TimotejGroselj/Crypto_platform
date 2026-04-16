@@ -62,28 +62,39 @@
 </div>
 -->
   
-<label for="type">Action:</label>
-<input type="radio" name="type" value="1">
-  <label for="type">buy</label>
-  <input type="radio" name="type" value="2">
-  <label for="type">sell</label>
-</input>
+
+<form method="POST" action="/dashboard">
+<label style="color: #f0b90b;" for="type-buy">Action:</label>
+<input type="radio" id="type-buy" name="type" value="1" required>
+  <label style="color: #f0b90b;" for="type-buy">buy</label>
+<input type="radio" id="type-sell" name="type" value="2">
+  <label style="color: #f0b90b;" for="type-sell">sell</label>
 
 <label style="color: #f0b90b;" for="coin">Coin:</label>
 
 %for coin_id,data in box_el.items():
 <input type="radio" name="coin" value="{{coin_id}}">
-  <label for="coin">{{data["name"]}}</label>
+  <label style="color: #f0b90b;" for="coin">{{data["name"]}}</label>
   % end
 </input>
 
 <div class="amount">
-  <input type="range" min="0" max="100" value="50" class="slider" id="amount">
+  <input type="range" min="0" max="100" value="50" class="slider" id="amount" name="amount">
+  <span id="amount-value">50</span>%
 </div>
 
-<div>
-<button class="doit">Execute Transaction</button>
-</div>
+<input type="submit" value="Submit" class="submit-btn">
+</form>
+
+<script>
+  const amountSlider = document.getElementById('amount');
+  const amountValue = document.getElementById('amount-value');
+  if (amountSlider && amountValue) {
+    amountSlider.addEventListener('input', () => {
+      amountValue.textContent = amountSlider.value;
+    });
+  }
+</script>
 
 
 

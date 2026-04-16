@@ -111,13 +111,15 @@ def dashboard_logic():
     action = request.forms.get('type')
     coin_id = request.forms.get('coin')
     amount = float(request.forms.get('amount'))
-    doit = request.forms.get('doit')
     user = User(sessions[request.cookies.get('session_id')])
+    user.buy_sell(amount, action, Coin(coin_id))
+    redirect("/dashboard")
+
     
-    
-    
-    
-    
+
+
+
+   
 @route("/logout")
 def logout():
     session_id = request.cookies.get('session_id')
