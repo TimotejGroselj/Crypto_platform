@@ -124,6 +124,7 @@ def logout():
 def show_coin(coin_id):
     check_session()
     coin = Coin(coin_id)
+    os.makedirs("temp", exist_ok=True)
     coin.make_graph()
     return template("coin", coin_id=coin_id)
 

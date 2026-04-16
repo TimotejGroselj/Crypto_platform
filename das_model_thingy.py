@@ -94,7 +94,9 @@ def show_market(coin:Coin, how_far_back = 364):
             
         all_volume = sold_volume+bought_volume
         if all_volume != 0:
-            sold_volume,bought_volume = (sold_volume/all_volume)*100,(bought_volume/all_volume)*100   
+            for date in volume_changes:
+                volume_changes[date][0] = (volume_changes[date][0]/all_volume)*100
+                volume_changes[date][1] = (volume_changes[date][1]/all_volume)*100
 
         return volume_changes
 def do_show_market():
