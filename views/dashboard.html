@@ -31,6 +31,10 @@
           % else:
               <span style="color: green;">{{round(data["price"], 2)}}$</span>
           % end
+          
+          <label for="file">market change in the last 24h:</label>
+          <progress class = "market-change" id="file" value="{{data['market_change'][list(data['market_change'].keys())[0]][0]}}" max="100"> </progress>
+
       </button>
   </div>
   % end

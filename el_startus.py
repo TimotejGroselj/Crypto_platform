@@ -98,8 +98,11 @@ def show_dashboard():
     box_el = dict()
     for coin in coins:
         coin:Coin
-        box_el[coin.get_coin_id()] = dict(logo = coin.get_coin_img_url(), name = coin.get_coin_name(), price = coin.get_todays_price(),change = coin.get_change())
-        
+        market_change = show_market(coin, 1)
+        box_el[coin.get_coin_id()] = dict(logo = coin.get_coin_img_url(), name = coin.get_coin_name(), price = coin.get_todays_price(),change = coin.get_change(), market_change = market_change)
+    
+
+
     return template("dashboard", box_el = box_el)
 
 @route("/dashboard", method='POST')

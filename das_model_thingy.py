@@ -79,28 +79,24 @@ def show_market(coin:Coin, how_far_back = 364):
             if date in data_for_every_day:
                 data_for_every_day[date][1] +=quant
         
-        
-        print(f"{'Sold volume':<12}{'|':^3}{'Date':^12}{'|':^3}{'Bought volume':<12}")
         sold_volume = 0
         bought_volume = 0
+        volume_changes = dict()
         for i, date in enumerate(dates):
             sold = data_for_every_day[date][1]
             bought = data_for_every_day[date][0]
             sold_volume += sold
             bought_volume += bought
-            print(f"{round(sold,5):^12}{'|':^3}{date:^12}{'|':^3}{round(bought,5):^12}")
+            volume_changes[date] = [sold,bought]
+
             if i >=how_far_back:
                 break
             
         all_volume = sold_volume+bought_volume
-        if all_volume == 0:
-            print(f"Nothing happend in the last {how_far_back} days")
-        else:
+        if all_volume != 0:
             sold_volume,bought_volume = (sold_volume/all_volume)*100,(bought_volume/all_volume)*100   
-            print(f"Total market change in the last {how_far_back} days:")
-            print(f"{round(sold_volume,2):>49}% : {round(bought_volume,2)}%")
-            print("-"*int(sold_volume)+"+"*int(bought_volume))
-            
+
+        return volume_changes
 def do_show_market():
     """
     
@@ -117,14 +113,23 @@ def do_show_market():
     which_one = int_input("Which coin do you want to see?\n"+string+f"{len(tabelus)+1}. Leave\n", len(tabelus)+1)
     if which_one == len(tabelus)+1:
         return
-    how_far_back = int_input("For how many days bacl do you want to see the changes to the market volumes (if nothing or invalid is entered deafult is maximum 364 days): ",364)
-    if how_far_back == 364:
-        show_market(tabelus[which_one-1],364)
-    else:
-        show_market(tabelus[which_one-1],how_far_back)
-    
-    
-    
+    how_far_back = int_input("For how many days back do you want to see the changes to the market volumes: ",364)
+    print(f"{'Sold volume':<12}{'|':^3}{'Date':^12}{'|':^3}{'Bought volume':<12}")
+    volume_changes = show_market(tabelus[which_one-1],how_far_back)
+    dates = list(volume_changes.keys())
+    dates.sort()
+
+    all_sold = 0
+    all_bought = 0
+    for date in dates:
+        sold = volume_changes[date][0]
+        all_sold += sold
+        bought = volume_changes[date][1]
+        all_bought += bought
+        print(f"{round(sold,5):^12}{'|':^3}{date:^12}{'|':^3}{round(bought,5):^12}")
+    print("-"*int(all_sold)+"+"*int(all_bought))
+
+
 def do_login():
     """
     Izvede login

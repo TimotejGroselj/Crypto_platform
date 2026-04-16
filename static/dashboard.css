@@ -105,3 +105,11 @@ body {
   margin: auto;
   background: none;
 }
+
+
+progress::-webkit-progress-bar {
+  background-color: red;
+}
+progress::-webkit-progress-value {
+  background-color: green;
+}
