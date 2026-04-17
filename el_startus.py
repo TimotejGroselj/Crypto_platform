@@ -98,25 +98,31 @@ def show_dashboard():
     box_el = dict()
     for coin in coins:
         coin:Coin
-        market_change = show_market(coin, 1)
-        box_el[coin.get_coin_id()] = dict(logo = coin.get_coin_img_url(), name = coin.get_coin_name(), price = coin.get_todays_price(),change = coin.get_change(), market_change = market_change)
+        _,all_sold,all_bought = show_market(coin, 1)
+        box_el[coin.get_coin_id()] = dict(logo = coin.get_coin_img_url(), name = coin.get_coin_name(), price = coin.get_todays_price(),change = coin.get_change(), all_sold = all_sold, all_bought = all_bought)
     transactions = user.all_transactions()
 
 
     return template("dashboard", box_el = box_el, transactions = transactions)
 
-@route("/dashboard", method='POST')
-def dashboard_logic():
+@route("/dashboard/transaction", method='POST')
+def trans_logic():
     check_session()
     action = request.forms.get('type')
     coin_id = request.forms.get('coin')
     amount = float(request.forms.get('amount'))
     user = User(sessions[request.cookies.get('session_id')])
     user.buy_sell(amount, action, Coin(coin_id))
+
     redirect("/dashboard")
 
-    
-
+@route("/dashboard/money-add", method='POST')
+def dashboard_money_add():
+    check_session()
+    amount = float(request.forms.get('money-add'))
+    user = User(sessions[request.cookies.get('session_id')])
+    user.change_eur(amount)
+    redirect("/dashboard")
 
 
    

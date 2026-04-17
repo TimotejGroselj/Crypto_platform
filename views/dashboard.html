@@ -33,14 +33,17 @@
           % end
           <br>
           <label for="market-change">market change 24h:</label>
-          <span style="color: green; font-size: small;">bought</span>
-          <progress class = "market-change" id="market-change" value="{{data['market_change'][list(data['market_change'].keys())[0]][0]}}" max="100"> </progress>
-          <span style="color: red; font-size: small;">sold</span>
+          <br>
+          {{data['all_sold']}}% sold, {{data['all_bought']}}% bought
+          <br>
+          <span style="color: green; font-size: small; width: 20%;">bought</span>
+          <progress class = "market-change" id="market-change" min = "0" value="{{data['all_bought']}}" max="100"> </progress>
+          <span style="color: red; font-size: small; width: 20%;">sold</span>
       </button>
   </div>
   % end
 </div>
-<!--
+
 <div class = "transaction-history">
   <h2>Transaction History</h2>
   <table class="transaction-history">
@@ -60,14 +63,14 @@
     % end
   </table>
 </div>
--->
+
   
 
-<form method="POST" action="/dashboard">
+<form method="POST" action="/dashboard/transaction" class="transaction-form">
 <label style="color: #f0b90b;" for="type-buy">Action:</label>
 <input type="radio" id="type-buy" name="type" value="1" required>
   <label style="color: #f0b90b;" for="type-buy">buy</label>
-<input type="radio" id="type-sell" name="type" value="2">
+<input type="radio" id="type-sell" name="type" value="2" required>
   <label style="color: #f0b90b;" for="type-sell">sell</label>
 
 <label style="color: #f0b90b;" for="coin">Coin:</label>
@@ -85,6 +88,14 @@
 
 <input type="submit" value="Submit" class="submit-btn">
 </form>
+
+<form action="/dashboard/money-add" method="post">
+  <div class="input-group">
+      <input type="number" name = "money-add" placeholder="Add assets" required min="1"/>
+  </div>
+
+</form>
+
 
 <script>
   const amountSlider = document.getElementById('amount');
