@@ -132,7 +132,7 @@ class User:
             (wallet_id,coin_id,quantity,date,valid,type)
             VALUES(?,?,?,?,?,?)
             """
-            self.cur.execute(querry,(id_to_hash(self.id),coin.get_coin_id(),eur*amount/100 if invest_id == 1 else (coin_currently*(amount/100))*coin_price,datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d"),1,"sell" if invest_id==0 else "buy"))
+            self.cur.execute(querry,(id_to_hash(self.id),coin.get_coin_id(),eur*amount/100 if invest_id == 1 else (amount/100)*coin_price,datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d"),1,"sell" if invest_id==0 else "buy"))
         return True
 
 
