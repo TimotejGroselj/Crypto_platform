@@ -20,24 +20,24 @@
 
 <div class="coinstatcont">
 
-  %for coin_id,data in box_el.items():
+  %for coin, (all_sold, all_bought) in box_el.items():
   <div class = "coinstat">
-      <button class="coin-select" onclick="location.href='/coin/{{coin_id}}'">
-          <img src="{{data['logo']}}" class="coin-logo">
-          <h1>{{data["name"]}}</h1>
+      <button class="coin-select" onclick="location.href='/coin/{{coin.get_coin_id()}}'">
+          <img src="{{coin.get_coin_img_url()}}" class="coin-logo">
+          <h1>{{coin.get_coin_name()}}</h1>
           Price: 
-          %if 0 > data["change"]:
-              <span style="color: rgb(255, 0, 0);">{{round(data["price"], 2)}} -{{round(data["change"]/data["price"] * 100, 2)}}%</span>
+          %if 0 > coin.get_change():
+              <span style="color: rgb(255, 0, 0);">{{round(coin.get_todays_price(), 2)}} -{{round(coin.get_change()/coin.get_todays_price() * 100, 2)}}%</span>
           % else:
-              <span style="color: green;">{{round(data["price"], 2)}} +{{round(data["change"]/data["price"] * 100, 2)}}%</span>
+              <span style="color: green;">{{round(coin.get_todays_price(), 2)}} +{{round(coin.get_change()/coin.get_todays_price() * 100, 2)}}%</span>
           % end
           <br>
           <label for="market-change">market change 24h:</label>
           <br>
-          {{data['all_sold']}}% sold, {{data['all_bought']}}% bought
+          {{all_sold}}% sold, {{all_bought}}% bought
           <br>
           <span style="color: green; font-size: small; width: 20%;">bought</span>
-          <progress class = "market-change" id="market-change" min = "0" value="{{data['all_bought']}}" max="100"> </progress>
+          <progress class = "market-change" id="market-change" min = "0" value="{{all_bought}}" max="100"> </progress>
           <span style="color: red; font-size: small; width: 20%;">sold</span>
       </button>
   </div>
@@ -67,19 +67,22 @@
   
 
 <form method="POST" action="/dashboard/transaction" class="transaction-form">
-<label style="color: #f0b90b;" for="type-buy">Action:</label>
+
+<div style="color: #f0b90b; font-size: large;">Your balance: {{user.check_assets()["EUR"]}}</div>
+<label style="color: #f0b90b;" for="type">Action:</label>
 <input type="radio" id="type-buy" name="type" value="1" required>
-  <label style="color: #f0b90b;" for="type-buy">buy</label>
+  <label style="color: #f0b90b;" for="type">buy</label>
 <input type="radio" id="type-sell" name="type" value="2" required>
-  <label style="color: #f0b90b;" for="type-sell">sell</label>
-
+  <label style="color: #f0b90b;" for="type">sell</label>
+<br>
 <label style="color: #f0b90b;" for="coin">Coin:</label>
-
-%for coin_id,data in box_el.items():
-<input type="radio" name="coin" value="{{coin_id}}">
-  <label style="color: #f0b90b;" for="coin">{{data["name"]}}</label>
+%for coin in box_el:
+<input type="radio" name="coin" value="{{coin.get_coin_id()}}">
+  <label style="color: #f0b90b;" for="coin">{{coin.get_coin_name()}}: {{user.check_assets()[coin.get_coin_id()]}}</label>
   % end
 </input>
+
+
 
 <div class="amount">
   <input type="range" min="0" max="100" value="50" class="slider" id="amount" name="amount">

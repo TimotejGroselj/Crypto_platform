@@ -30,7 +30,7 @@ class User:
         """
         assets = self.check_assets()
         for coin, quant in assets.items():
-            print(f"{coin.get_coin_name()}: {quant}")
+            print(f"{Coin(coin).get_coin_name()}: {quant}")
             
             
 
@@ -65,7 +65,7 @@ class User:
         name = self.cur.execute(q2,[id_to_hash(self.id)]).fetchall()
         assets = dict()
         for coin,money in name:
-            assets[Coin(coin)] = money
+            assets[coin] = money
         return assets
     
     ### funkciji za transakcije izvajat
@@ -78,10 +78,10 @@ class User:
         string = ""
         data = self.check_assets()
         for coin, quant in data.items():
-            if coin.get_coin_id() == "EUR":
+            if coin == "EUR":
                 balance = quant
                 continue
-            item = (coin,quant)
+            item = (Coin(coin),quant)
             tabelus.append(item)
             string += f"{i}. {item[0].get_coin_name()}: {item[1]}\n"
             i += 1
@@ -110,7 +110,7 @@ class User:
                 (wallet_id,coin_id,quantity,date,valid,type)
                 VALUES(?,?,?,?,?,?)
                 """
-                self.cur.execute(querry,(id_to_hash(self.id),coin.get_coin_id(),amount*self.check_assets()[Coin("EUR")]/100,datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d"),0,"sell" if invest_id==0 else "buy"))
+                self.cur.execute(querry,(id_to_hash(self.id),coin.get_coin_id(),amount*self.check_assets()["EUR"]/100,datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d"),0,"sell" if invest_id==0 else "buy"))
                 return False
             eur = self.cur.execute("SELECT money FROM assets WHERE wallet_id = ? AND coin_id = 'EUR';", [id_to_hash(self.id)]).fetchone()[0]
             coin_currently = self.cur.execute("SELECT money FROM assets WHERE wallet_id = ? AND coin_id = ?", [id_to_hash(self.id),coin.get_coin_id()]).fetchone()[0]

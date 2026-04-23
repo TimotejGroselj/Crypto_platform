@@ -99,11 +99,12 @@ def show_dashboard():
     for coin in coins:
         coin:Coin
         _,all_sold,all_bought = show_market(coin, 1)
-        box_el[coin.get_coin_id()] = dict(logo = coin.get_coin_img_url(), name = coin.get_coin_name(), price = coin.get_todays_price(),change = coin.get_change(), all_sold = all_sold, all_bought = all_bought)
+        box_el[coin] = [all_sold, all_bought]
+
     transactions = user.all_transactions()
 
 
-    return template("dashboard", box_el = box_el, transactions = transactions)
+    return template("dashboard", box_el = box_el, transactions = transactions, user = user)
 
 @route("/dashboard/transaction", method='POST')
 def trans_logic():
