@@ -3,19 +3,415 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard</title>
+    <title>{{coin_name}} — AUTIZMUS MAXIMUS</title>
     <link rel="stylesheet" href="/static/dashboard.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:       #0b0e11;
+            --surface:  #161a1f;
+            --surface2: #1e2329;
+            --border:   #2b3139;
+            --accent:   #f0b90b;   /* Binance yellow */
+            --up:       #0ecb81;
+            --down:     #f6465d;
+            --text:     #eaecef;
+            --muted:    #848e9c;
+            --mono:     'Space Mono', monospace;
+            --sans:     'Syne', sans-serif;
+        }
+
+        html, body {
+            min-height: 100%;
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--sans);
+        }
+
+        /* ════════ TOPBAR ════════ */
+        .topbar {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(11,14,17,.92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+        }
+        .topbar-inner {
+            max-width: 1400px; margin: 0 auto;
+            padding: 0 1.5rem; height: 58px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .topbar-left { display: flex; align-items: center; gap: 1.5rem; }
+
+        .logo {
+            font-family: var(--mono); font-size: .85rem; font-weight: 700;
+            letter-spacing: .14em; color: var(--accent); text-transform: uppercase;
+        }
+
+        .back-btn {
+            background: none; border: 1px solid var(--border);
+            color: var(--muted); font-family: var(--sans); font-size: .78rem;
+            padding: .35rem .8rem; border-radius: 6px; cursor: pointer;
+            transition: border-color .2s, color .2s;
+            text-decoration: none; display: inline-flex; align-items: center; gap: .4rem;
+        }
+        .back-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+        .topbar .right { display: flex; gap: .6rem; }
+        .topbar button {
+            background: var(--surface2); border: 1px solid var(--border);
+            color: var(--text); font-family: var(--sans); font-size: .78rem;
+            padding: .38rem .85rem; border-radius: 6px; cursor: pointer;
+            transition: border-color .2s;
+        }
+        .topbar button:hover { border-color: var(--accent); }
+        .topbar .logout a { color: inherit; text-decoration: none; }
+
+        /* ════════ PAGE ════════ */
+        .page {
+            max-width: 1400px; margin: 0 auto;
+            padding: 1.5rem 1.5rem 4rem;
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            grid-template-rows: auto 1fr;
+            gap: 1.25rem;
+            align-items: start;
+        }
+
+        /* ── coin header ── */
+        .coin-header {
+            grid-column: 1 / -1;
+            display: flex; align-items: center; gap: 1.2rem;
+            padding: 1rem 1.25rem;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+        .coin-header img {
+            width: 40px; height: 40px; border-radius: 50%;
+            object-fit: contain; background: rgba(255,255,255,.05); padding: 3px;
+        }
+        .coin-header h1 {
+            font-size: 1.25rem; font-weight: 800; letter-spacing: -.01em;
+        }
+        .coin-header .coin-id-tag {
+            font-family: var(--mono); font-size: .7rem; color: var(--muted);
+            background: var(--surface2); border: 1px solid var(--border);
+            padding: .25rem .55rem; border-radius: 5px; text-transform: uppercase;
+        }
+        .price-big {
+            margin-left: auto; text-align: right;
+        }
+        .price-big .val {
+            font-family: var(--mono); font-size: 1.5rem; font-weight: 700;
+        }
+        .price-big .val.up   { color: var(--up); }
+        .price-big .val.down { color: var(--down); }
+        .price-big .label {
+            font-size: .7rem; color: var(--muted); letter-spacing: .06em;
+        }
+
+        /* ── graph panel ── */
+        .graph-panel {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 10px; overflow: hidden;
+        }
+        .graph-panel .panel-title {
+            padding: .85rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            font-size: .75rem; font-weight: 600; letter-spacing: .08em;
+            text-transform: uppercase; color: var(--muted);
+        }
+        .coin-graph {
+            display: block; width: 100%;
+            height: auto; max-height: 400px;
+            object-fit: contain;
+        }
+
+        /* ════════ TRADE PANEL ════════ */
+        .trade-panel {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 10px; overflow: hidden;
+            position: sticky; top: 74px;
+        }
+
+        /* tab bar */
+        .trade-tabs {
+            display: flex; border-bottom: 1px solid var(--border);
+        }
+        .tab-btn {
+            flex: 1; padding: .85rem 0;
+            background: none; border: none; border-bottom: 2px solid transparent;
+            font-family: var(--sans); font-size: .85rem; font-weight: 700;
+            cursor: pointer; transition: color .2s, border-color .2s;
+            color: var(--muted);
+            margin-bottom: -1px;
+        }
+        .tab-btn.buy.active  { color: var(--up);   border-color: var(--up); }
+        .tab-btn.sell.active { color: var(--down);  border-color: var(--down); }
+        .tab-btn:hover { color: var(--text); }
+
+        /* form body */
+        .trade-body { padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; }
+
+        /* balance row */
+        .balance-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: .65rem .85rem;
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 7px; font-size: .8rem;
+        }
+        .balance-row .bal-label { color: var(--muted); }
+        .balance-row .bal-val   { font-family: var(--mono); font-weight: 700; color: var(--accent); }
+
+        /* field */
+        .field { display: flex; flex-direction: column; gap: .4rem; }
+        .field label {
+            font-size: .72rem; color: var(--muted);
+            text-transform: uppercase; letter-spacing: .07em;
+        }
+        .input-wrap {
+            display: flex; align-items: center;
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 7px; overflow: hidden;
+            transition: border-color .2s;
+        }
+        .input-wrap:focus-within { border-color: var(--accent); }
+        .input-wrap input {
+            flex: 1; background: none; border: none; outline: none;
+            color: var(--text); font-family: var(--mono); font-size: .95rem;
+            padding: .65rem .85rem;
+        }
+        .input-unit {
+            padding: 0 .85rem; color: var(--muted);
+            font-family: var(--mono); font-size: .78rem;
+            border-left: 1px solid var(--border);
+            background: var(--surface); height: 100%;
+            display: flex; align-items: center;
+        }
+
+        /* percent quick-picks */
+        .pct-row { display: flex; gap: .4rem; }
+        .pct-btn {
+            flex: 1; padding: .35rem 0;
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 5px; color: var(--muted);
+            font-family: var(--mono); font-size: .7rem; cursor: pointer;
+            transition: background .15s, color .15s, border-color .15s;
+        }
+        .pct-btn:hover { background: rgba(240,185,11,.1); border-color: var(--accent); color: var(--accent); }
+
+        /* total estimate */
+        .total-row {
+            display: flex; justify-content: space-between;
+            font-size: .8rem; padding: .5rem 0;
+            border-top: 1px solid var(--border);
+        }
+        .total-row .tl { color: var(--muted); }
+        .total-row .tv { font-family: var(--mono); font-weight: 700; }
+
+        /* submit */
+        .submit-btn {
+            width: 100%; padding: .85rem;
+            border: none; border-radius: 8px;
+            font-family: var(--sans); font-size: .95rem; font-weight: 800;
+            cursor: pointer; letter-spacing: .03em;
+            transition: opacity .15s, transform .1s;
+        }
+        .submit-btn:active { transform: scale(.98); opacity: .85; }
+        .submit-btn.buy  { background: var(--up);   color: #000; }
+        .submit-btn.sell { background: var(--down);  color: #fff; }
+
+        /* flash message */
+        %if defined('flash') and flash:
+        /* handled in HTML below */
+        %end
+
+        .flash {
+            padding: .7rem 1rem; border-radius: 7px;
+            font-size: .8rem; font-weight: 600;
+            display: flex; align-items: center; gap: .5rem;
+        }
+        .flash.ok   { background: rgba(14,203,129,.12); color: var(--up);   border: 1px solid rgba(14,203,129,.25); }
+        .flash.err  { background: rgba(246,70,93,.12);  color: var(--down);  border: 1px solid rgba(246,70,93,.25); }
+
+        /* ════════ HOLDINGS STRIP ════════ */
+        .holdings-strip {
+            grid-column: 1 / -1;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 10px; padding: 1rem 1.5rem;
+            display: flex; align-items: center; gap: 2.5rem;
+        }
+        .holdings-strip .hs-title {
+            font-size: .72rem; text-transform: uppercase;
+            letter-spacing: .08em; color: var(--muted);
+        }
+        .holdings-strip .hs-val {
+            font-family: var(--mono); font-size: 1rem; font-weight: 700;
+            margin-top: .2rem;
+        }
+        .holdings-strip .divider {
+            width: 1px; height: 36px; background: var(--border);
+        }
+    </style>
 </head>
+
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="left">
+    <div class="topbar-left">
       <span class="logo">AUTIZMUS MAXIMUS</span>
+      <a class="back-btn" href="/dashboard">← Markets</a>
     </div>
     <div class="right">
-      <button class="login">👤</button>
-      <button class="logout"> <a href="/logout">Log Out</a></button>
+      <button class="login">👤 Account</button>
+      <button class="logout"><a href="/logout">Log Out</a></button>
     </div>
   </div>
 </header>
 
-<img src="/temp/{{coin_id}}.png" alt="Graph for {coin.get_coin_name()}" class="coin-graph">
+<div class="page">
+
+  <!-- ── coin header bar ── -->
+  <div class="coin-header">
+    <img src="{{coin_logo}}" alt="{{coin_name}}">
+    <h1>{{coin_name}}</h1>
+    <span class="coin-id-tag">{{coin_id}}</span>
+    <div class="price-big">
+      <div class="label">Current Price</div>
+      %if change < 0:
+      <div class="val down">${{round(price, 2)}}</div>
+      %else:
+      <div class="val up">${{round(price, 2)}}</div>
+      %end
+    </div>
+  </div>
+
+  <!-- ── graph ── -->
+  <div class="graph-panel">
+    <div class="panel-title">Price Chart</div>
+    <img src="/temp/{{coin_id}}.png" alt="Graph for {{coin_name}}" class="coin-graph">
+  </div>
+
+  <!-- ════ TRADE PANEL ════ -->
+  <div class="trade-panel">
+    <div class="trade-tabs">
+      <button class="tab-btn buy active" onclick="switchTab('buy', this)">Buy</button>
+      <button class="tab-btn sell" onclick="switchTab('sell', this)">Sell</button>
+    </div>
+
+    <div class="trade-body">
+
+      %if defined('flash') and flash:
+      <div class="flash {{flash_type}}">{{flash}}</div>
+      %end
+
+      <!-- balance -->
+      <div class="balance-row">
+        <span class="bal-label">Available Balance</span>
+        <span class="bal-val">${{round(balance, 2)}}</span>
+      </div>
+
+      <!-- form -->
+      <form action="/coin/{{coin_id}}/trade" method="POST" id="trade-form">
+        <input type="hidden" name="action" id="action-input" value="buy">
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+
+          <div class="field">
+            <label>Amount (coins)</label>
+            <div class="input-wrap">
+              <input type="number" name="amount" id="amount-input"
+                     min="0.00001" step="any" placeholder="0.00"
+                     oninput="updateTotal()" required>
+              <span class="input-unit">COIN</span>
+            </div>
+          </div>
+
+          <div class="pct-row">
+            <button type="button" class="pct-btn" onclick="setPct(25)">25%</button>
+            <button type="button" class="pct-btn" onclick="setPct(50)">50%</button>
+            <button type="button" class="pct-btn" onclick="setPct(75)">75%</button>
+            <button type="button" class="pct-btn" onclick="setPct(100)">Max</button>
+          </div>
+
+          <div class="field">
+            <label>Price per coin</label>
+            <div class="input-wrap">
+              <input type="text" value="{{round(price, 2)}}" readonly
+                     style="color:var(--muted);">
+              <span class="input-unit">USD</span>
+            </div>
+          </div>
+
+          <div class="total-row">
+            <span class="tl">Estimated Total</span>
+            <span class="tv" id="total-display">$0.00</span>
+          </div>
+
+          <button type="submit" class="submit-btn buy" id="submit-btn">Buy {{coin_name}}</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ── holdings strip ── -->
+  <div class="holdings-strip">
+    <div>
+      <div class="hs-title">Your Holdings</div>
+      <div class="hs-val">{{round(holdings, 6)}} coins</div>
+    </div>
+    <div class="divider"></div>
+    <div>
+      <div class="hs-title">Holding Value</div>
+      <div class="hs-val">${{round(holdings * price, 2)}}</div>
+    </div>
+    <div class="divider"></div>
+    <div>
+      <div class="hs-title">Cash Balance</div>
+      <div class="hs-val">${{round(balance, 2)}}</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const PRICE   = {{price}};
+  const BALANCE = {{balance}};
+  const HOLDINGS = {{holdings}};
+
+  function updateTotal() {
+    const amt = parseFloat(document.getElementById('amount-input').value) || 0;
+    document.getElementById('total-display').textContent = '$' + (amt * PRICE).toFixed(2);
+  }
+
+  function setPct(pct) {
+    const action = document.getElementById('action-input').value;
+    let maxAmount;
+    if (action === 'buy') {
+      maxAmount = (BALANCE / PRICE) * (pct / 100);
+    } else {
+      maxAmount = HOLDINGS * (pct / 100);
+    }
+    document.getElementById('amount-input').value = maxAmount.toFixed(6);
+    updateTotal();
+  }
+
+  function switchTab(tab, el) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('action-input').value = tab;
+    const btn = document.getElementById('submit-btn');
+    const coinName = '{{coin_name}}';
+    if (tab === 'buy') {
+      btn.className = 'submit-btn buy';
+      btn.textContent = 'Buy ' + coinName;
+    } else {
+      btn.className = 'submit-btn sell';
+      btn.textContent = 'Sell ' + coinName;
+    }
+  }
+</script>
+
+<body></body>
+</html>

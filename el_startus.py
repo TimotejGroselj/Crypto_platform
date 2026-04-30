@@ -137,13 +137,33 @@ def logout():
         os.remove(f"temp/{pic}")
     redirect("/")
     
-@route("/coin/<coin_id>")
+"""@route("/coin/<coin_id>")
 def show_coin(coin_id):
     check_session()
     coin = Coin(coin_id)
     os.makedirs("temp", exist_ok=True)
     coin.make_graph()
-    return template("coin", coin_id=coin_id)
+    return template("coin", coin_id=coin_id)"""
+
+@route("/coin/<coin_id>")
+def show_coin(coin_id):
+    email = check_session()
+    coin = Coin(coin_id)
+    coin.make_graph()
+    user = User(email)
+    #print(user.check_assets())
+    return template(
+        "coin",
+        coin_id    = coin_id,
+        coin_name  = coin.get_coin_name(),
+        coin_logo  = coin.get_coin_img_url(),
+        price      = coin.get_todays_price(),
+        change     = coin.get_change(),
+        balance    = 12,       # cash balance in USD,user.check_assets()['USD']
+        holdings   = 1,  # coins the user holds, user.check_assets()[coin_id]
+        flash      = None,
+        flash_type = None,
+    )
 
 #run(host='192.168.1.9', port=8080, debug=True)
 run(host='127.0.0.1', port=8080, debug=True)

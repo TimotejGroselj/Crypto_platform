@@ -3,124 +3,308 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard</title>
+    <title>Markets — AUTIZMUS MAXIMUS</title>
     <link rel="stylesheet" href="/static/dashboard.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:      #0b0e11;
+            --surface: #161a1f;
+            --surface2:#1e2329;
+            --border:  #2b3139;
+            --accent:  #f0b90b;
+            --up:      #0ecb81;
+            --down:    #f6465d;
+            --text:    #eaecef;
+            --muted:   #848e9c;
+            --mono:    'Space Mono', monospace;
+            --sans:    'Syne', sans-serif;
+        }
+
+        html, body {
+            min-height: 100%;
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--sans);
+        }
+
+        /* ════════ TOPBAR ════════ */
+        .topbar {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(11,14,17,.96);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+        }
+        .topbar-inner {
+            max-width: 1400px; margin: 0 auto;
+            padding: 0 1.5rem; height: 58px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .logo {
+            font-family: var(--mono); font-size: .85rem; font-weight: 700;
+            letter-spacing: .14em; color: var(--accent); text-transform: uppercase;
+            display: flex; align-items: center; gap: .65rem;
+        }
+        .logo-dot {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--accent);
+            animation: blink 2s ease-in-out infinite;
+            flex-shrink: 0;
+        }
+        @keyframes blink {
+            0%,100% { opacity: 1; }
+            50%      { opacity: .2; }
+        }
+        .topbar .right { display: flex; gap: .6rem; align-items: center; }
+        .topbar button {
+            background: var(--surface2); border: 1px solid var(--border);
+            color: var(--text); font-family: var(--sans); font-size: .78rem; font-weight: 600;
+            padding: .38rem .85rem; border-radius: 6px; cursor: pointer;
+            transition: border-color .2s, background .2s;
+        }
+        .topbar button:hover { border-color: var(--accent); background: rgba(240,185,11,.07); }
+        .topbar .logout a { color: inherit; text-decoration: none; }
+
+        /* ════════ PAGE ════════ */
+        .page {
+            max-width: 1400px; margin: 0 auto;
+            padding: 2rem 1.5rem 5rem;
+        }
+
+        /* ── summary bar ── */
+        .summary-bar {
+            display: flex; gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            border-radius: 10px; overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        .summary-cell {
+            flex: 1; padding: 1rem 1.4rem;
+            background: var(--surface);
+            display: flex; flex-direction: column; gap: .3rem;
+        }
+        .sc-label {
+            font-size: .68rem; color: var(--muted);
+            text-transform: uppercase; letter-spacing: .08em;
+        }
+        .sc-val {
+            font-family: var(--mono); font-size: 1.05rem; font-weight: 700;
+        }
+        .sc-val.up   { color: var(--up); }
+        .sc-val.down { color: var(--down); }
+        .sc-val.gold { color: var(--accent); }
+
+        /* ── section header ── */
+        .section-head {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        .section-head h2 { font-size: 1.1rem; font-weight: 800; }
+        .live-badge {
+            display: flex; align-items: center; gap: .4rem;
+            font-family: var(--mono); font-size: .68rem; color: var(--muted);
+            background: var(--surface2); border: 1px solid var(--border);
+            padding: .3rem .7rem; border-radius: 20px;
+        }
+        .live-badge .dot {
+            width: 5px; height: 5px; border-radius: 50%;
+            background: var(--up);
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        /* ════════ MARKET TABLE ════════ */
+        .market-table {
+            width: 100%;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            border-collapse: collapse;
+        }
+        .market-table thead tr { border-bottom: 1px solid var(--border); }
+        .market-table thead th {
+            padding: .75rem 1.25rem;
+            font-size: .68rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: .08em;
+            color: var(--muted); text-align: left;
+            background: var(--surface2);
+        }
+        .market-table thead th.right { text-align: right; }
+
+        .market-table tbody tr {
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background .15s;
+            animation: rowIn .35s ease both;
+        }
+        .market-table tbody tr:last-child { border-bottom: none; }
+        .market-table tbody tr:hover { background: rgba(240,185,11,.04); }
+
+        .market-table tbody tr:nth-child(1)  { animation-delay: .04s }
+        .market-table tbody tr:nth-child(2)  { animation-delay: .08s }
+        .market-table tbody tr:nth-child(3)  { animation-delay: .12s }
+        .market-table tbody tr:nth-child(4)  { animation-delay: .16s }
+        .market-table tbody tr:nth-child(5)  { animation-delay: .20s }
+        .market-table tbody tr:nth-child(6)  { animation-delay: .24s }
+        .market-table tbody tr:nth-child(7)  { animation-delay: .28s }
+        .market-table tbody tr:nth-child(8)  { animation-delay: .32s }
+        .market-table tbody tr:nth-child(9)  { animation-delay: .36s }
+        .market-table tbody tr:nth-child(10) { animation-delay: .40s }
+
+        @keyframes rowIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        .market-table tbody td {
+            padding: 1rem 1.25rem;
+            font-size: .88rem; vertical-align: middle;
+        }
+        .market-table tbody td.right { text-align: right; }
+
+        /* coin cell */
+        .coin-cell { display: flex; align-items: center; gap: .85rem; }
+        .coin-logo {
+            width: 34px; height: 34px; border-radius: 50%;
+            object-fit: contain;
+            background: rgba(255,255,255,.04);
+            padding: 3px; flex-shrink: 0;
+        }
+        .coin-cell-name { font-weight: 800; font-size: .9rem; line-height: 1; }
+        .coin-cell-id {
+            font-family: var(--mono); font-size: .65rem;
+            color: var(--muted); margin-top: .2rem; text-transform: uppercase;
+        }
+
+        /* price */
+        .price-cell { font-family: var(--mono); font-size: .92rem; font-weight: 700; }
+        .price-cell.up   { color: var(--up); }
+        .price-cell.down { color: var(--down); }
+
+        /* change badge */
+        .badge {
+            display: inline-flex; align-items: center; gap: .25rem;
+            font-family: var(--mono); font-size: .72rem; font-weight: 700;
+            padding: .28rem .65rem; border-radius: 5px;
+        }
+        .badge.up   { background: rgba(14,203,129,.12); color: var(--up); }
+        .badge.down { background: rgba(246,70,93,.12);  color: var(--down); }
+
+        /* row number */
+        .row-num {
+            font-family: var(--mono); font-size: .72rem; color: var(--muted);
+        }
+
+        /* arrow */
+        .arrow-cell { color: var(--muted); font-size: .8rem; transition: color .15s, transform .15s; }
+        tr:hover .arrow-cell { color: var(--accent); transform: translateX(5px); }
+    </style>
 </head>
+
 <header class="topbar">
   <div class="topbar-inner">
     <div class="left">
-      <span class="logo">AUTIZMUS MAXIMUS</span>
+      <span class="logo"><span class="logo-dot"></span>AUTIZMUS MAXIMUS</span>
     </div>
     <div class="right">
-      <button class="login">👤</button>
-      <button class="logout"> <a href="/logout">Log Out</a></button>
+      <button class="login">👤 Account</button>
+      <button class="logout"><a href="/logout">Log Out</a></button>
     </div>
   </div>
 </header>
 
-<div class="coinstatcont">
+<div class="page">
 
-  %for coin, (all_sold, all_bought) in box_el.items():
-  <div class = "coinstat">
-      <button class="coin-select" onclick="location.href='/coin/{{coin.get_coin_id()}}'">
-          <img src="{{coin.get_coin_img_url()}}" class="coin-logo">
-          <h1>{{coin.get_coin_name()}}</h1>
-          Price: 
-          %if 0 > coin.get_change():
-              <span style="color: rgb(255, 0, 0);">{{round(coin.get_todays_price(), 2)}} -{{round(coin.get_change()/coin.get_todays_price() * 100, 2)}}%</span>
-          % else:
-              <span style="color: green;">{{round(coin.get_todays_price(), 2)}} +{{round(coin.get_change()/coin.get_todays_price() * 100, 2)}}%</span>
-          % end
-          <br>
-          <label for="market-change">market change 24h:</label>
-          <br>
-          {{all_sold}}% sold, {{all_bought}}% bought
-          <br>
-          <span style="color: green; font-size: small; width: 20%;">bought</span>
-          <progress class = "market-change" id="market-change" min = "0" value="{{all_bought}}" max="100"> </progress>
-          <span style="color: red; font-size: small; width: 20%;">sold</span>
-      </button>
+  <!-- ── summary bar ── -->
+  <div class="summary-bar">
+    <div class="summary-cell">
+      <span class="sc-label">Total Listed</span>
+      <span class="sc-val gold">{{len(box_el)}} coins</span>
+    </div>
+    <div class="summary-cell">
+      <span class="sc-label">Gainers</span>
+      <span class="sc-val up">{{len([c for c in box_el.values() if c["change"] >= 0])}}</span>
+    </div>
+    <div class="summary-cell">
+      <span class="sc-label">Losers</span>
+      <span class="sc-val down">{{len([c for c in box_el.values() if c["change"] < 0])}}</span>
+    </div>
+    <div class="summary-cell">
+      <span class="sc-label">Top Gainer</span>
+      %gainers = [c for c in box_el.values() if c["change"] >= 0]
+      %if gainers:
+        %top = max(gainers, key=lambda c: c["change"])
+        <span class="sc-val up">{{top["name"]}} &nbsp;+{{round(top["change"], 2)}}%</span>
+      %else:
+        <span class="sc-val" style="color:var(--muted);">—</span>
+      %end
+    </div>
   </div>
-  % end
-</div>
 
-<div class = "transaction-history">
-  <h2>Transaction History</h2>
-  <table class="transaction-history">
-    <tr>
-      <th>date</th>
-      <th>coin</th>
-      <th>amount</th>
-      <th>type</th>
-    </tr>
-    %for transaction in transactions:
-    <tr>
-      <td>{{transaction[2]}}</td>
-      <td>{{transaction[0]}}</td>
-      <td>{{round(transaction[1], 2)}}</td>
-      <td>{{transaction[3]}}</td>
-    </tr>
-    % end
+  <!-- ── section header ── -->
+  <div class="section-head">
+    <h2>Market Overview</h2>
+    <span class="live-badge"><span class="dot"></span>Live prices</span>
+  </div>
+
+  <!-- ── market table ── -->
+  <table class="market-table">
+    <thead>
+      <tr>
+        <th style="width:40px;">#</th>
+        <th>Coin</th>
+        <th class="right">Price</th>
+        <th class="right">24h Change</th>
+        <th class="right"></th>
+      </tr>
+    </thead>
+    <tbody>
+
+      %for i, (coin_id, data) in enumerate(box_el.items(), start=1):
+      <tr onclick="location.href='/coin/{{coin_id}}'">
+
+        <td><span class="row-num">{{i}}</span></td>
+
+        <td>
+          <div class="coin-cell">
+            <img src="{{data['logo']}}" class="coin-logo" alt="{{data['name']}}">
+            <div>
+              <div class="coin-cell-name">{{data["name"]}}</div>
+              <div class="coin-cell-id">{{coin_id}}</div>
+            </div>
+          </div>
+        </td>
+
+        <td class="right">
+          %if 0 > data["change"]:
+          <span class="price-cell down">${{round(data["price"], 5)}}</span>
+          %else:
+          <span class="price-cell up">${{round(data["price"], 5)}}</span>
+          %end
+        </td>
+
+        <td class="right">
+          %if 0 > data["change"]:
+          <span class="badge down">▼ {{round(abs(data["change"]), 2)}}%</span>
+          %else:
+          <span class="badge up">▲ {{round(data["change"], 2)}}%</span>
+          %end
+        </td>
+
+        <td class="right"><span class="arrow-cell">→</span></td>
+
+      </tr>
+      %end
+
+    </tbody>
   </table>
+
 </div>
 
-  
-
-<form method="POST" action="/dashboard/transaction" class="transaction-form">
-
-<div style="color: #f0b90b; font-size: large;">Your balance: {{user.check_assets()["EUR"]}}</div>
-<label style="color: #f0b90b;" for="type">Action:</label>
-<input type="radio" id="type-buy" name="type" value="1" required>
-  <label style="color: #f0b90b;" for="type">buy</label>
-<input type="radio" id="type-sell" name="type" value="2" required>
-  <label style="color: #f0b90b;" for="type">sell</label>
-<br>
-<label style="color: #f0b90b;" for="coin">Coin:</label>
-%for coin in box_el:
-<input type="radio" name="coin" value="{{coin.get_coin_id()}}">
-  <label style="color: #f0b90b;" for="coin">{{coin.get_coin_name()}}: {{user.check_assets()[coin.get_coin_id()]}}</label>
-  % end
-</input>
-
-
-
-<div class="amount">
-  <input type="range" min="0" max="100" value="50" class="slider" id="amount" name="amount">
-  <span id="amount-value">50</span>%
-</div>
-
-<input type="submit" value="Submit" class="submit-btn">
-</form>
-
-<form action="/dashboard/money-add" method="post">
-  <div class="input-group">
-      <input type="number" name = "money-add" placeholder="Add assets" required min="1"/>
-  </div>
-
-</form>
-
-
-<script>
-  const amountSlider = document.getElementById('amount');
-  const amountValue = document.getElementById('amount-value');
-  if (amountSlider && amountValue) {
-    amountSlider.addEventListener('input', () => {
-      amountValue.textContent = amountSlider.value;
-    });
-  }
-</script>
-
-
-
-
-
-
-
-
-
-
-
-
-<body>
-</body>
+<body></body>
 </html>
