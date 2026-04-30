@@ -121,7 +121,7 @@ def logout():
 def show_coin(coin_id):
     check_session()
     coin = Coin(coin_id)
-    coin.make_graph()a
+    coin.make_graph()
     return template("coin", coin_id=coin_id)"""
 
 @route("/coin/<coin_id>")
