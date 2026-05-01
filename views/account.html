@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Account — AUTIZMUS MAXIMUS</title>
+    <link rel="stylesheet" href="/static/dashboard.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:      #0b0e11;
+            --surface: #161a1f;
+            --surface2:#1e2329;
+            --border:  #2b3139;
+            --accent:  #f0b90b;
+            --up:      #0ecb81;
+            --down:    #f6465d;
+            --text:    #eaecef;
+            --muted:   #848e9c;
+            --mono:    'Space Mono', monospace;
+            --sans:    'Syne', sans-serif;
+        }
+
+        html, body { min-height: 100%; background: var(--bg); color: var(--text); font-family: var(--sans); }
+
+        /* ════════ TOPBAR ════════ */
+        .topbar {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(11,14,17,.96);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+        }
+        .topbar-inner {
+            max-width: 1400px; margin: 0 auto;
+            padding: 0 1.5rem; height: 58px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .topbar-left { display: flex; align-items: center; gap: 1.5rem; }
+        .logo {
+            font-family: var(--mono); font-size: .85rem; font-weight: 700;
+            letter-spacing: .14em; color: var(--accent); text-transform: uppercase;
+            display: flex; align-items: center; gap: .65rem;
+        }
+        .logo-dot {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: var(--accent); box-shadow: 0 0 8px var(--accent);
+            animation: blink 2s ease-in-out infinite; flex-shrink: 0;
+        }
+        @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:.2; } }
+
+        .back-btn {
+            background: none; border: 1px solid var(--border);
+            color: var(--muted); font-family: var(--sans); font-size: .78rem;
+            padding: .35rem .8rem; border-radius: 6px; cursor: pointer;
+            text-decoration: none; display: inline-flex; align-items: center; gap: .4rem;
+            transition: border-color .2s, color .2s;
+        }
+        .back-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+        .topbar .right { display: flex; gap: .6rem; align-items: center; }
+        .topbar button {
+            background: var(--surface2); border: 1px solid var(--border);
+            color: var(--text); font-family: var(--sans); font-size: .78rem; font-weight: 600;
+            padding: .38rem .85rem; border-radius: 6px; cursor: pointer;
+            transition: border-color .2s, background .2s;
+        }
+        .topbar button:hover { border-color: var(--accent); background: rgba(240,185,11,.07); }
+        .topbar .logout a { color: inherit; text-decoration: none; }
+
+        /* ════════ PAGE ════════ */
+        .page {
+            max-width: 1400px; margin: 0 auto;
+            padding: 2rem 1.5rem 5rem;
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 1.25rem;
+            align-items: start;
+        }
+
+        /* ════════ LEFT COLUMN ════════ */
+        .left-col { display: flex; flex-direction: column; gap: 1.25rem; }
+
+        /* ── profile hero ── */
+        .profile-hero {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 10px; padding: 1.5rem;
+            display: flex; align-items: center; gap: 1.25rem;
+        }
+        .avatar {
+            width: 52px; height: 52px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), #ff9500);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem; font-weight: 800; color: #000; flex-shrink: 0;
+            font-family: var(--mono);
+        }
+        .profile-info {}
+        .profile-name { font-size: 1.15rem; font-weight: 800; line-height: 1; }
+        .profile-sub  { font-family: var(--mono); font-size: .7rem; color: var(--muted); margin-top: .3rem; }
+
+        .total-block { margin-left: auto; text-align: right; }
+        .total-block .tl { font-size: .68rem; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; }
+        .total-block .tv {
+            font-family: var(--mono); font-size: 1.5rem; font-weight: 700;
+            color: var(--accent); margin-top: .2rem;
+        }
+
+        /* ── panel shared ── */
+        .panel {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 10px; overflow: hidden;
+        }
+        .panel-title {
+            padding: .85rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            font-size: .72rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: .09em; color: var(--muted);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+
+        /* ── holdings table ── */
+        .holdings-table {
+            width: 100%; border-collapse: collapse;
+        }
+        .holdings-table thead th {
+            padding: .65rem 1.25rem;
+            font-size: .67rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: .07em;
+            color: var(--muted); text-align: left;
+            background: var(--surface2); border-bottom: 1px solid var(--border);
+        }
+        .holdings-table thead th.right { text-align: right; }
+        .holdings-table tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background .15s;
+            cursor: pointer;
+            animation: rowIn .35s ease both;
+        }
+        .holdings-table tbody tr:last-child { border-bottom: none; }
+        .holdings-table tbody tr:hover { background: rgba(240,185,11,.04); }
+
+        .holdings-table tbody tr:nth-child(1) { animation-delay:.04s }
+        .holdings-table tbody tr:nth-child(2) { animation-delay:.08s }
+        .holdings-table tbody tr:nth-child(3) { animation-delay:.12s }
+        .holdings-table tbody tr:nth-child(4) { animation-delay:.16s }
+        .holdings-table tbody tr:nth-child(5) { animation-delay:.20s }
+        .holdings-table tbody tr:nth-child(6) { animation-delay:.24s }
+        .holdings-table tbody tr:nth-child(7) { animation-delay:.28s }
+        .holdings-table tbody tr:nth-child(8) { animation-delay:.32s }
+
+        @keyframes rowIn {
+            from { opacity:0; transform:translateX(-8px); }
+            to   { opacity:1; transform:translateX(0); }
+        }
+
+        .holdings-table tbody td {
+            padding: .9rem 1.25rem; font-size: .87rem; vertical-align: middle;
+        }
+        .holdings-table tbody td.right { text-align: right; }
+
+        .coin-cell { display: flex; align-items: center; gap: .8rem; }
+        .coin-logo {
+            width: 32px; height: 32px; border-radius: 50%;
+            object-fit: contain; background: rgba(255,255,255,.04); padding: 3px; flex-shrink: 0;
+        }
+        .eur-icon {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: #003399; display: flex; align-items: center; justify-content: center;
+            font-family: var(--mono); font-size: .85rem; font-weight: 700; color: #fff;
+            flex-shrink: 0;
+        }
+        .coin-cell-name { font-weight: 800; font-size: .88rem; line-height: 1; }
+        .coin-cell-id   { font-family: var(--mono); font-size: .63rem; color: var(--muted); margin-top: .2rem; text-transform: uppercase; }
+
+        .amount-val { font-family: var(--mono); font-size: .88rem; font-weight: 700; }
+        .value-val  { font-family: var(--mono); font-size: .85rem; color: var(--muted); }
+
+        .zero-row td { opacity: .35; }
+
+        .arrow-cell { color: var(--muted); font-size: .8rem; transition: color .15s, transform .15s; }
+        tr:hover .arrow-cell { color: var(--accent); transform: translateX(4px); }
+
+        /* ── transaction history ── */
+        .tx-list { display: flex; flex-direction: column; }
+        .tx-row {
+            display: flex; align-items: center; gap: 1rem;
+            padding: .85rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            animation: rowIn .3s ease both;
+        }
+        .tx-row:last-child { border-bottom: none; }
+
+        .tx-icon {
+            width: 34px; height: 34px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .9rem; flex-shrink: 0;
+        }
+        .tx-icon.buy  { background: rgba(14,203,129,.12); color: var(--up); }
+        .tx-icon.sell { background: rgba(246,70,93,.12);  color: var(--down); }
+
+        .tx-info { flex: 1; }
+        .tx-name { font-weight: 700; font-size: .85rem; line-height: 1; }
+        .tx-date { font-family: var(--mono); font-size: .65rem; color: var(--muted); margin-top: .2rem; }
+
+        .tx-amount {
+            font-family: var(--mono); font-size: .82rem; font-weight: 700; text-align: right;
+        }
+        .tx-amount.buy  { color: var(--up); }
+        .tx-amount.sell { color: var(--down); }
+
+        .tx-type-badge {
+            font-family: var(--mono); font-size: .62rem; font-weight: 700;
+            padding: .2rem .5rem; border-radius: 4px; text-transform: uppercase;
+        }
+        .tx-type-badge.buy  { background: rgba(14,203,129,.12); color: var(--up); }
+        .tx-type-badge.sell { background: rgba(246,70,93,.12);  color: var(--down); }
+
+        .empty-state {
+            padding: 2.5rem; text-align: center;
+            color: var(--muted); font-size: .85rem;
+        }
+
+        /* ════════ RIGHT COLUMN ════════ */
+        .right-col { display: flex; flex-direction: column; gap: 1.25rem; }
+
+        /* ── EUR panel ── */
+        .eur-panel {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 10px; overflow: hidden;
+            position: sticky; top: 74px;
+        }
+
+        .eur-balance-block {
+            padding: 1.5rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            display: flex; flex-direction: column; gap: .3rem;
+        }
+        .eur-balance-block .label {
+            font-size: .68rem; color: var(--muted);
+            text-transform: uppercase; letter-spacing: .08em;
+        }
+        .eur-balance-block .eur-val {
+            font-family: var(--mono); font-size: 1.7rem; font-weight: 700;
+            color: var(--accent);
+        }
+        .eur-balance-block .eur-sub {
+            font-family: var(--mono); font-size: .68rem; color: var(--muted);
+        }
+
+        /* tabs */
+        .eur-tabs { display: flex; border-bottom: 1px solid var(--border); }
+        .eur-tab {
+            flex: 1; padding: .8rem 0;
+            background: none; border: none; border-bottom: 2px solid transparent;
+            font-family: var(--sans); font-size: .82rem; font-weight: 700;
+            cursor: pointer; color: var(--muted); margin-bottom: -1px;
+            transition: color .2s, border-color .2s;
+        }
+        .eur-tab.deposit.active  { color: var(--up);   border-color: var(--up); }
+        .eur-tab.withdraw.active { color: var(--down);  border-color: var(--down); }
+        .eur-tab:hover { color: var(--text); }
+
+        .eur-form-body { padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; }
+
+        .field { display: flex; flex-direction: column; gap: .4rem; }
+        .field label {
+            font-size: .7rem; color: var(--muted);
+            text-transform: uppercase; letter-spacing: .07em;
+        }
+        .input-wrap {
+            display: flex; align-items: center;
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 7px; overflow: hidden; transition: border-color .2s;
+        }
+        .input-wrap:focus-within { border-color: var(--accent); }
+        .input-wrap input {
+            flex: 1; background: none; border: none; outline: none;
+            color: var(--text); font-family: var(--mono); font-size: .95rem;
+            padding: .65rem .85rem;
+        }
+        .input-unit {
+            padding: 0 .85rem; color: var(--muted);
+            font-family: var(--mono); font-size: .75rem;
+            border-left: 1px solid var(--border);
+            background: var(--surface); height: 100%;
+            display: flex; align-items: center; white-space: nowrap;
+        }
+
+        /* quick amounts */
+        .quick-row { display: flex; gap: .4rem; }
+        .quick-btn {
+            flex: 1; padding: .35rem 0;
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 5px; color: var(--muted);
+            font-family: var(--mono); font-size: .68rem; cursor: pointer;
+            transition: background .15s, color .15s, border-color .15s;
+        }
+        .quick-btn:hover { background: rgba(240,185,11,.1); border-color: var(--accent); color: var(--accent); }
+
+        .submit-btn {
+            width: 100%; padding: .8rem;
+            border: none; border-radius: 8px;
+            font-family: var(--sans); font-size: .9rem; font-weight: 800;
+            cursor: pointer; transition: opacity .15s, transform .1s;
+        }
+        .submit-btn:active { transform: scale(.98); opacity: .85; }
+        .submit-btn.deposit  { background: var(--up);   color: #000; }
+        .submit-btn.withdraw { background: var(--down);  color: #fff; }
+
+        /* flash */
+        .flash {
+            padding: .65rem 1rem; border-radius: 7px;
+            font-size: .78rem; font-weight: 600;
+            display: flex; align-items: center; gap: .5rem;
+        }
+        .flash.ok  { background: rgba(14,203,129,.12); color: var(--up);   border: 1px solid rgba(14,203,129,.25); }
+        .flash.err { background: rgba(246,70,93,.12);  color: var(--down);  border: 1px solid rgba(246,70,93,.25); }
+
+    </style>
+</head>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="topbar-left">
+      <span class="logo"><span class="logo-dot"></span>AUTIZMUS MAXIMUS</span>
+      <a class="back-btn" href="/dashboard">← Markets</a>
+    </div>
+    <div class="right">
+      <button class="logout"><a href="/logout">Log Out</a></button>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+
+  <!-- ════════════ LEFT COLUMN ════════════ -->
+  <div class="left-col">
+
+    <!-- profile hero -->
+    <div class="profile-hero">
+      <div class="avatar">{{username[0].upper()}}</div>
+      <div class="profile-info">
+        <div class="profile-name">{{username}}</div>
+        <div class="profile-sub">{{email}}</div>
+      </div>
+      <div class="total-block">
+        <div class="tl">Total Portfolio Value</div>
+        <div class="tv">€{{round(total_value, 2)}}</div>
+      </div>
+    </div>
+
+    <!-- holdings table -->
+    <div class="panel">
+      <div class="panel-title">
+        <span>My Holdings</span>
+        <span style="font-family:var(--mono);font-size:.68rem;">{{len(holdings)}} assets</span>
+      </div>
+      <table class="holdings-table">
+        <thead>
+          <tr>
+            <th>Asset</th>
+            <th class="right">Amount</th>
+            <th class="right">Value (EUR)</th>
+            <th class="right"></th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- EUR row first -->
+          <tr>
+            <td>
+              <div class="coin-cell">
+                <div class="eur-icon">€</div>
+                <div>
+                  <div class="coin-cell-name">Euro</div>
+                  <div class="coin-cell-id">EUR</div>
+                </div>
+              </div>
+            </td>
+            <td class="right"><span class="amount-val" style="color:var(--accent);">€{{round(eur_balance, 2)}}</span></td>
+            <td class="right"><span class="value-val">€{{round(eur_balance, 2)}}</span></td>
+            <td class="right"><span class="arrow-cell"></span></td>
+          </tr>
+
+          <!-- coin rows -->
+          %for coin_id, data in holdings.items():
+          <tr class="{{'zero-row' if data['amount'] == 0 else ''}}"
+              onclick="location.href='/coin/{{coin_id}}'">
+            <td>
+              <div class="coin-cell">
+                <img src="{{data['logo']}}" class="coin-logo" alt="{{data['name']}}">
+                <div>
+                  <div class="coin-cell-name">{{data['name']}}</div>
+                  <div class="coin-cell-id">{{coin_id}}</div>
+                </div>
+              </div>
+            </td>
+            <td class="right">
+              <span class="amount-val">{{round(data['amount'], 6)}}</span>
+            </td>
+            <td class="right">
+              <span class="value-val">€{{round(data['value_eur'], 2)}}</span>
+            </td>
+            <td class="right"><span class="arrow-cell">→</span></td>
+          </tr>
+          %end
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- transaction history -->
+    <div class="panel">
+      <div class="panel-title">
+        <span>Transaction History</span>
+        <span style="font-family:var(--mono);font-size:.68rem;">{{len(transactions)}} records</span>
+      </div>
+
+      %if not transactions:
+      <div class="empty-state">No transactions yet.</div>
+      %else:
+      <div class="tx-list">
+        %for i, (coin_name, quantity, date, tx_type) in enumerate(transactions):
+        <div class="tx-row" style="animation-delay:{{i * 0.04}}s;">
+          <div class="tx-icon {{tx_type}}">
+            %if tx_type == 'buy':
+            ↓
+            %else:
+            ↑
+            %end
+          </div>
+          <div class="tx-info">
+            <div class="tx-name">{{coin_name}}</div>
+            <div class="tx-date">{{date}}</div>
+          </div>
+          <span class="tx-type-badge {{tx_type}}">{{tx_type}}</span>
+          <div class="tx-amount {{tx_type}}">
+            %if tx_type == 'buy':
+            −€{{round(quantity, 2)}}
+            %else:
+            +€{{round(quantity, 2)}}
+            %end
+          </div>
+        </div>
+        %end
+      </div>
+      %end
+
+    </div>
+
+  </div>
+
+  <!-- ════════════ RIGHT COLUMN ════════════ -->
+  <div class="right-col">
+    <div class="eur-panel">
+
+      <!-- EUR balance -->
+      <div class="eur-balance-block">
+        <span class="label">EUR Balance</span>
+        <span class="eur-val">€{{round(eur_balance, 2)}}</span>
+        <span class="eur-sub">Available to invest or withdraw</span>
+      </div>
+
+      <!-- tabs -->
+      <div class="eur-tabs">
+        <button class="eur-tab deposit active" onclick="switchEurTab('deposit', this)">Deposit</button>
+        <button class="eur-tab withdraw"       onclick="switchEurTab('withdraw', this)">Withdraw</button>
+      </div>
+
+      <!-- form -->
+      <div class="eur-form-body">
+
+        %if defined('flash') and flash:
+        <div class="flash {{flash_type}}">{{flash}}</div>
+        %end
+
+        <form action="/account/eur" method="POST" id="eur-form">
+          <input type="hidden" name="action" id="eur-action" value="deposit">
+          <div style="display:flex;flex-direction:column;gap:1rem;">
+
+            <div class="field">
+              <label>Amount</label>
+              <div class="input-wrap">
+                <input type="number" name="amount" id="eur-amount"
+                       min="0.01" step="0.01" placeholder="0.00" required>
+                <span class="input-unit">EUR</span>
+              </div>
+            </div>
+
+            <div class="quick-row">
+              <button type="button" class="quick-btn" onclick="setEur(100)">€100</button>
+              <button type="button" class="quick-btn" onclick="setEur(500)">€500</button>
+              <button type="button" class="quick-btn" onclick="setEur(1000)">€1000</button>
+              <button type="button" class="quick-btn" id="max-btn"
+                      onclick="setEur({{round(eur_balance, 2)}})">Max</button>
+            </div>
+
+            <button type="submit" class="submit-btn deposit" id="eur-submit">Deposit EUR</button>
+
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const EUR_BALANCE = {{eur_balance}};
+
+  function switchEurTab(tab, el) {
+    document.querySelectorAll('.eur-tab').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('eur-action').value = tab;
+    const btn = document.getElementById('eur-submit');
+    const maxBtn = document.getElementById('max-btn');
+    if (tab === 'deposit') {
+      btn.className = 'submit-btn deposit';
+      btn.textContent = 'Deposit EUR';
+      maxBtn.style.display = 'none';
+    } else {
+      btn.className = 'submit-btn withdraw';
+      btn.textContent = 'Withdraw EUR';
+      maxBtn.style.display = '';
+      maxBtn.onclick = () => setEur(EUR_BALANCE);
+    }
+  }
+
+  function setEur(amount) {
+    document.getElementById('eur-amount').value = amount.toFixed(2);
+  }
+
+  // hide Max on deposit tab (can deposit any amount)
+  document.getElementById('max-btn').style.display = 'none';
+</script>
+
+<body></body>
+</html>

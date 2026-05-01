@@ -124,6 +124,118 @@ def show_coin(coin_id):
     coin.make_graph()
     return template("coin", coin_id=coin_id)"""
 
+
+@route('/account')
+def show_account():
+    email = check_session()
+    user = User(email)
+    assets = user.check_assets()  # dict: {coin_id: amount, 'EUR': amount}
+
+    eur_balance = assets.pop('EUR', 0)
+
+    # build holdings dict with coin metadata + EUR value
+    coins = get_coins()
+    coin_map = {c.get_coin_id(): c for c in coins}
+
+    holdings = {}
+    total_value = eur_balance
+    for coin_id, amount in assets.items():
+        coin = coin_map.get(coin_id)
+        if coin is None:
+            continue
+        price = coin.get_todays_price()
+        value_eur = amount * price
+        total_value += value_eur
+        holdings[coin_id] = dict(
+            name=coin.get_coin_name(),
+            logo=coin.get_coin_img_url(),
+            amount=amount,
+            price=price,
+            value_eur=value_eur,
+        )
+
+    transactions = user.all_transactions()  # [(coin_name, quantity, date, type), ...]
+
+    return template(
+        'account',
+        username=user.get_username(),
+        email=email,
+        eur_balance=eur_balance,
+        total_value=total_value,
+        holdings=holdings,
+        transactions=transactions,
+        flash=None,
+        flash_type=None,
+    )
+
+
+@route('/account/eur', method='POST')
+def account_eur():
+    email = check_session()
+    user = User(email)
+    action = request.forms.get('action')  # 'deposit' or 'withdraw'
+    try:
+        amount = float(request.forms.get('amount', 0))
+    except ValueError:
+        amount = 0
+
+    if amount <= 0:
+        flash = "Please enter a valid amount."
+        flash_type = "err"
+    elif action == 'deposit':
+        user.change_eur(amount)
+        flash = f"Successfully deposited €{round(amount, 2)}."
+        flash_type = "ok"
+    elif action == 'withdraw':
+        success = user.change_eur(-amount)
+        if success:
+            flash = f"Successfully withdrew €{round(amount, 2)}."
+            flash_type = "ok"
+        else:
+            flash = "Insufficient EUR balance."
+            flash_type = "err"
+    else:
+        flash = "Unknown action."
+        flash_type = "err"
+
+    # re-fetch everything to re-render page
+    assets = user.check_assets()
+    eur_balance = assets.pop('EUR', 0)
+
+    coins = get_coins()
+    coin_map = {c.get_coin_id(): c for c in coins}
+
+    holdings = {}
+    total_value = eur_balance
+    for coin_id, amount_held in assets.items():
+        coin = coin_map.get(coin_id)
+        if coin is None:
+            continue
+        price = coin.get_todays_price()
+        value_eur = amount_held * price
+        total_value += value_eur
+        holdings[coin_id] = dict(
+            name=coin.get_coin_name(),
+            logo=coin.get_coin_img_url(),
+            amount=amount_held,
+            price=price,
+            value_eur=value_eur,
+        )
+
+    transactions = user.all_transactions()
+
+    return template(
+        'account',
+        username=user.get_username(),
+        email=email,
+        eur_balance=eur_balance,
+        total_value=total_value,
+        holdings=holdings,
+        transactions=transactions,
+        flash=flash,
+        flash_type=flash_type,
+    )
+
 @route("/coin/<coin_id>")
 def show_coin(coin_id):
     email = check_session()
@@ -138,8 +250,8 @@ def show_coin(coin_id):
         coin_logo  = coin.get_coin_img_url(),
         price      = coin.get_todays_price(),
         change     = coin.get_change(),
-        balance    = 12,       # cash balance in USD,user.check_assets()['USD']
-        holdings   = 1,  # coins the user holds, user.check_assets()[coin_id]
+        balance    = user.check_assets().get("EUR",-10),       # cash balance in USD,
+        holdings   = user.check_assets().get(coin_id,-10),  # coins the user holds
         flash      = None,
         flash_type = None,
     )
