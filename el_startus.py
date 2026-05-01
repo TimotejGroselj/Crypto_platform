@@ -98,35 +98,15 @@ def show_dashboard():
     box_el = dict()
     for coin in coins:
         coin:Coin
-        _,all_sold,all_bought = show_market(coin, 1)
-        box_el[coin] = [all_sold, all_bought]
+        box_el[coin.get_coin_id()] = dict(logo = coin.get_coin_img_url(), name = coin.get_coin_name(), price = coin.get_todays_price(),change = coin.get_change())
+        
+    return template("dashboard", box_el = box_el)
 
-    transactions = user.all_transactions()
-
-
-    return template("dashboard", box_el = box_el, transactions = transactions, user = user)
-
-@route("/dashboard/transaction", method='POST')
-def trans_logic():
+@route("/dashboard", method='POST')
+def dashboard_logic():
     check_session()
-    action = request.forms.get('type')
-    coin_id = request.forms.get('coin')
-    amount = float(request.forms.get('amount'))
-    user = User(sessions[request.cookies.get('session_id')])
-    user.buy_sell(amount, action, Coin(coin_id))
+    return None
 
-    redirect("/dashboard")
-
-@route("/dashboard/money-add", method='POST')
-def dashboard_money_add():
-    check_session()
-    amount = float(request.forms.get('money-add'))
-    user = User(sessions[request.cookies.get('session_id')])
-    user.change_eur(amount)
-    redirect("/dashboard")
-
-
-   
 @route("/logout")
 def logout():
     session_id = request.cookies.get('session_id')
@@ -141,8 +121,7 @@ def logout():
 def show_coin(coin_id):
     check_session()
     coin = Coin(coin_id)
-    os.makedirs("temp", exist_ok=True)
-    coin.make_graph()
+    coin.make_graph()a
     return template("coin", coin_id=coin_id)"""
 
 @route("/coin/<coin_id>")
