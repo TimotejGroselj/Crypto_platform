@@ -308,8 +308,8 @@
 
       <!-- balance -->
       <div class="balance-row">
-        <span class="bal-label">Available Balance</span>
-        <span class="bal-val">${{round(balance, 2)}}</span>
+        <span class="bal-label" id="bal-label">Available Balance</span>
+        <span class="bal-val" id="bal-val">${{round(balance, 2)}}</span>
       </div>
 
       <!-- form -->
@@ -322,7 +322,7 @@
             <div class="input-wrap">
               <input type="number" name="amount" id="amount-input"
                      min="0.00001" step="any" placeholder="0.00"
-                     oninput="updateTotal()" required>
+                     oninput="clampAndUpdate()" required>
               <span class="input-unit">COIN</span>
             </div>
           </div>
@@ -376,31 +376,73 @@
 </div>
 
 <script>
-  const PRICE   = {{price}};
-  const BALANCE = {{balance}};
+  const PRICE    = {{price}};
+  const BALANCE  = {{balance}};
   const HOLDINGS = {{holdings}};
+  const COIN_ID  = '{{coin_id}}';
 
-  function updateTotal() {
-    const amt = parseFloat(document.getElementById('amount-input').value) || 0;
-    document.getElementById('total-display').textContent = '$' + (amt * PRICE).toFixed(2);
+  // Max coins purchasable with current balance
+  const MAX_BUY  = BALANCE / PRICE;
+  // Max coins sellable = what the user holds
+  const MAX_SELL = HOLDINGS;
+
+  function getMax() {
+    const action = document.getElementById('action-input').value;
+    return action === 'buy' ? MAX_BUY : MAX_SELL;
+  }
+
+  function applyMax() {
+    const input = document.getElementById('amount-input');
+    const max = getMax();
+    input.setAttribute('max', max);
+  }
+
+  function clampAndUpdate() {
+    const input = document.getElementById('amount-input');
+    const max   = getMax();
+    let val = parseFloat(input.value);
+
+    if (!isNaN(val)) {
+      if (val < 0) val = 0;
+      if (val > max) {
+        val = max;
+        input.value = val;
+      }
+    }
+
+    const display = isNaN(val) ? 0 : val;
+    document.getElementById('total-display').textContent = '$' + (display * PRICE).toFixed(2);
   }
 
   function setPct(pct) {
-    const action = document.getElementById('action-input').value;
-    let maxAmount;
-    if (action === 'buy') {
-      maxAmount = (BALANCE / PRICE) * (pct / 100);
-    } else {
-      maxAmount = HOLDINGS * (pct / 100);
-    }
-    document.getElementById('amount-input').value = maxAmount.toFixed(6);
-    updateTotal();
+    const max = getMax();
+    const amount = max * (pct / 100);
+    document.getElementById('amount-input').value = amount;
+    clampAndUpdate();
   }
 
   function switchTab(tab, el) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     el.classList.add('active');
     document.getElementById('action-input').value = tab;
+
+    // Reset and re-apply max for new tab
+    const input = document.getElementById('amount-input');
+    input.value = '';
+    applyMax();
+    clampAndUpdate();
+
+    // Update balance row to reflect what's relevant for this tab
+    const balLabel = document.getElementById('bal-label');
+    const balVal   = document.getElementById('bal-val');
+    if (tab === 'buy') {
+      balLabel.textContent = 'Available Balance';
+      balVal.textContent   = '$' + BALANCE.toFixed(2);
+    } else {
+      balLabel.textContent = 'Your Holdings';
+      balVal.textContent   = HOLDINGS.toFixed(6) + ' ' + COIN_ID.toUpperCase();
+    }
+
     const btn = document.getElementById('submit-btn');
     const coinName = '{{coin_name}}';
     if (tab === 'buy') {
@@ -411,6 +453,9 @@
       btn.textContent = 'Sell ' + coinName;
     }
   }
+
+  // Set correct max on initial load (buy tab is default)
+  applyMax();
 </script>
 
 <body></body>
