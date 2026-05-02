@@ -253,7 +253,6 @@ def trade_coin(coin_id):
     coin = Coin(coin_id)
     coin.make_graph()
     user = User(email)
-
     return template(
         "coin",
         coin_id=coin_id,
