@@ -116,14 +116,6 @@ def logout():
     for pic in os.listdir("temp"):
         os.remove(f"temp/{pic}")
     redirect("/")
-    
-"""@route("/coin/<coin_id>")
-def show_coin(coin_id):
-    check_session()
-    coin = Coin(coin_id)
-    coin.make_graph()
-    return template("coin", coin_id=coin_id)"""
-
 
 @route('/account')
 def show_account():
@@ -242,7 +234,6 @@ def show_coin(coin_id):
     coin = Coin(coin_id)
     coin.make_graph()
     user = User(email)
-    #print(user.check_assets())
     return template(
         "coin",
         coin_id    = coin_id,
@@ -254,6 +245,26 @@ def show_coin(coin_id):
         holdings   = user.check_assets().get(coin_id,-10),  # coins the user holds
         flash      = None,
         flash_type = None,
+    )
+
+@route("/coin/<coin_id>/trade",method="POST")
+def trade_coin(coin_id):
+    email = check_session()
+    coin = Coin(coin_id)
+    coin.make_graph()
+    user = User(email)
+
+    return template(
+        "coin",
+        coin_id=coin_id,
+        coin_name=coin.get_coin_name(),
+        coin_logo=coin.get_coin_img_url(),
+        price=coin.get_todays_price(),
+        change=coin.get_change(),
+        balance=user.check_assets().get("EUR", -10),  # cash balance in USD,
+        holdings=user.check_assets().get(coin_id, -10),  # coins the user holds
+        flash=None,
+        flash_type=None,
     )
 
 #run(host='192.168.1.9', port=8080, debug=True)
