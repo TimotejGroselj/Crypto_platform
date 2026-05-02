@@ -305,6 +305,7 @@ def trade_coin(coin_id):
         flash_type = flash_type,
     )
 
+
 #run(host='192.168.1.9', port=8080, debug=True)
 run(host='127.0.0.1', port=8080, debug=True)
 #192.168.1.15
