@@ -247,23 +247,62 @@ def show_coin(coin_id):
         flash_type = None,
     )
 
-@route("/coin/<coin_id>/trade",method="POST")
+@route("/coin/<coin_id>/trade", method="POST")
 def trade_coin(coin_id):
     email = check_session()
-    coin = Coin(coin_id)
-    coin.make_graph()
     user = User(email)
+    coin = Coin(coin_id)
+    action = request.forms.get('action', 'buy')  # 'buy' or 'sell'
+
+    try:
+        amount = float(request.forms.get('amount', 0))
+    except (ValueError, TypeError):
+        amount = 0
+
+    assets = user.check_assets()
+    balance  = assets.get('EUR', 0)
+    holdings = assets.get(coin_id, 0)
+    price    = coin.get_todays_price()
+
+    # --- validate amount ---
+    if amount <= 0:
+        flash, flash_type = "Please enter a valid amount.", "err"
+    elif action == 'buy':
+        cost = amount * price
+        if cost > balance:
+            flash, flash_type = "Insufficient balance for this purchase.", "err"
+        else:
+            # buy_sell expects % of EUR balance to spend
+            pct = (cost / balance) * 100 if balance > 0 else 0
+            ok = user.buy_sell(pct, 1, coin)
+            flash      = f"Bought {round(amount, 6)} {coin.get_coin_name()}." if ok else "Trade failed."
+            flash_type = "ok" if ok else "err"
+    elif action == 'sell':
+        if amount > holdings:
+            flash, flash_type = "You don't hold enough coins to sell that amount.", "err"
+        else:
+            # buy_sell expects % of holdings to sell
+            pct = (amount / holdings) * 100 if holdings > 0 else 0
+            ok = user.buy_sell(pct, 0, coin)
+            flash      = f"Sold {round(amount, 6)} {coin.get_coin_name()}." if ok else "Trade failed."
+            flash_type = "ok" if ok else "err"
+    else:
+        flash, flash_type = "Unknown action.", "err"
+
+    # re-fetch updated state for the re-render
+    coin.make_graph()
+    updated_assets = user.check_assets()
     return template(
         "coin",
-        coin_id=coin_id,
-        coin_name=coin.get_coin_name(),
-        coin_logo=coin.get_coin_img_url(),
-        price=coin.get_todays_price(),
-        change=coin.get_change(),
-        balance=user.check_assets().get("EUR", -10),  # cash balance in USD,
-        holdings=user.check_assets().get(coin_id, -10),  # coins the user holds
-        flash=None,
-        flash_type=None,
+        coin_id    = coin_id,
+        coin_name  = coin.get_coin_name(),
+        coin_logo  = coin.get_coin_img_url(),
+        price      = price,
+        change     = coin.get_change(),
+        balance    = updated_assets.get("EUR", 0),
+        holdings   = updated_assets.get(coin_id, 0),
+        flash      = flash,
+        flash_type = flash_type,
     )
 
 #run(host='192.168.1.9', port=8080, debug=True)
