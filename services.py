@@ -160,7 +160,6 @@ def run_register() -> bool:
         if failing is None:
             initial_eur = get_float_input(
                 "How much EUR would you like to deposit right away? "
-                "(invalid input defaults to 0): "
             )
             if initial_eur < 0:
                 initial_eur = 0.0

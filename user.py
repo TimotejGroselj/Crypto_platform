@@ -103,7 +103,7 @@ class User:
 
         Returns True on success, False on failure.
         """
-        if not (0 <= percentage <= 100):
+        if not (0 < percentage <= 100):
             print("Invalid percentage amount!")
             self._record_transaction(coin.get_coin_id(), 0, action, valid=False)
             return False
@@ -185,7 +185,7 @@ class User:
             prompt_coin = f"Which coin do you want to sell?\n{menu}{leave_option}. Leave\n"
             prompt_pct = (
                 "How much do you want to sell? "
-                "(Enter a % of your holdings; invalid input defaults to 0): "
+                "(Enter a % of your holdings: "
             )
         else:
             prompt_coin = f"Which coin do you want to buy?\n{menu}{leave_option}. Leave\n"

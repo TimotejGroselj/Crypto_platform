@@ -88,7 +88,9 @@ class Coin:
 
     def save_graph(self) -> None:
         """Renders a price chart and saves it to temp/<coin_id>.png."""
-        if f"temp/{self.coin_id}.png" in os.listdir("temp"):
+        if "temp" not in os.listdir():
+            os.mkdir("temp")
+        elif f"temp/{self.coin_id}.png" in os.listdir("temp"):
             return  # Skip if already saved
         history = self.get_price_history()
         dates = list(history.keys())
@@ -145,8 +147,7 @@ class Coin:
             f"Best price\n{round(best_price, 6)}",
             transform=ax.transAxes, color="green",
         )
-        if "temp" not in os.listdir():
-            os.mkdir("temp")
+
         plt.savefig(f"temp/{self.coin_id}.png", bbox_inches="tight", facecolor=fig.get_facecolor())
         plt.close()
 
@@ -154,6 +155,3 @@ class Coin:
         """Saves and opens the price chart."""
         self.save_graph()
         Image.open(f"temp/{self.coin_id}.png").show()
-
-
-saved_graph = Coin("bitcoin").show_graph()  # Pre-generate graph for BTC to speed up first access
