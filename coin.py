@@ -10,21 +10,20 @@ from PIL import Image
 class Coin:
     """Represents a single cryptocurrency and provides price/graph utilities."""
 
-    def __init__(self, coin_id: str):
+    def __init__(self, coin_id: str, coin_name: str = None, coin_img_url: str = None, price: float = None):
         self.coin_id = coin_id
-        conn = sqlite3.connect("cryptodata.sqlite")
-        with conn:
-            cur = conn.cursor()
-            if self.coin_id != "EUR":
-                row = cur.execute(
-                    "SELECT coin_name, coin_img FROM coins WHERE coin_id = ?",
-                    (self.coin_id,),
+        self.coin_name = coin_name
+        self.coin_img_url = coin_img_url
+        self._cached_price = price
+
+        if coin_name is None and coin_id != "EUR":
+            conn = sqlite3.connect("cryptodata.sqlite")
+            with conn:
+                row = conn.execute(
+                    "SELECT coin_name, coin_img FROM coins WHERE coin_id = ?", (coin_id,)
                 ).fetchone()
-                self.coin_name: str = row[0]
-                self.coin_img_url: str = row[1]
-            else:
-                self.coin_name = "EUR"
-                self.coin_img_url = None
+            self.coin_name = row[0]
+            self.coin_img_url = row[1]
 
     # ------------------------------------------------------------------
     # Price queries
@@ -43,10 +42,12 @@ class Coin:
 
     def get_todays_price(self) -> float:
         """Returns the most recent recorded price for this coin."""
+        if self._cached_price is not None:
+            return self._cached_price
+            # fallback to DB if not cached
         conn = sqlite3.connect("cryptodata.sqlite")
         with conn:
-            cur = conn.cursor()
-            return cur.execute(
+            return conn.execute(
                 "SELECT price FROM coins_prices "
                 "WHERE coin_id = ? AND date = (SELECT MAX(date) FROM coins_prices WHERE coin_id = ?)",
                 (self.coin_id, self.coin_id),

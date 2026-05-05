@@ -21,7 +21,7 @@ class AuthManager:
 
     def is_valid_email(self, email: str) -> bool:
         """Returns True if the email matches a basic valid format."""
-        return bool(re.fullmatch(r".+@.+\..+", email))
+        return bool(re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", email)) and ".." not in email and ".@" not in email
 
     def validate_password(self, password: str) -> str | None:
         """

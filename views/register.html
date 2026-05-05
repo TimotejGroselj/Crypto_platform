@@ -16,22 +16,22 @@
         <div class="input-group">
             <input type="text" name = "email" placeholder="Email" required value="{{email or ''}}" />
         </div>
-        % if error == 'Please insert a valid email!':
+        % if error == 'Invalid email address.':
             <p class="incorrect-input">{{error}}</p>
         % end
-        % if error == 'User with that email already exists!':
+        % if error == 'An account with this email already exists.':
             <p class="incorrect-input">{{error}}</p>
         % end
         <div class="input-group">
             <input type="text" name = "password" placeholder="Password" value = "{{password or ''}}" required/>
         </div>
-        % if error == 'Chose a stronger password!':
+        % if error == 'Please choose a stronger password.':
             <p class="incorrect-input">{{error}}</p>
         % end
         <div class="input-group">
             <input type="text" name = "confirm_password" placeholder="Confirm password" required />
         </div>
-        % if error == 'Passwords do not match!':
+        % if error == 'Passwords do not match.':
             <p class="incorrect-input">{{error}}</p>
         % end
         <div class="input-group">

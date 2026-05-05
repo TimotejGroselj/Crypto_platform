@@ -13,16 +13,16 @@
         <div class="input-group">
             <input type="text" name = "email" placeholder="Email" required value="{{email or ''}}" />
         </div>
-        % if error == 'Please insert a valid email!':
+        % if error == 'Please enter a valid email address.':
             <p class="incorrect-input">{{error}}</p>
         % end
-        % if error == 'This email does not exist!':
+        % if error == 'No account found for this email.':
             <p class="incorrect-input">{{error}}</p>
         % end
         <div class="input-group">
             <input type="password" name = "password" placeholder="Password" required />
         </div>
-        % if error == 'Incorrect password!':
+        % if error == 'Incorrect password.':
             <p class="incorrect-input">{{error}}</p>
         % end
         <button type="submit">Sign In</button>

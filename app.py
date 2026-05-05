@@ -60,7 +60,7 @@ def handle_login():
 
     session_id = str(uuid.uuid4())
     _sessions[session_id] = email
-    response.set_cookie("session_id", session_id, secure=True, httponly=True)
+    response.set_cookie("session_id", session_id, secure=False, httponly=True, samesite="Lax")
     return redirect("/greet")
 
 
@@ -78,7 +78,6 @@ def handle_register():
     confirm_password = request.forms.get("confirm_password")
     initial_eur = int(request.forms.get("assets", 0))
     auth = AuthManager()
-
     if not auth.is_valid_email(email):
         return template("register", error="Invalid email address.", username=username, email=None, password=password)
     if auth.is_registered(email):
@@ -170,6 +169,7 @@ def handle_eur_adjustment():
 
 def _render_account(user: User, flash, flash_type):
     """Builds the context dict and renders the account template."""
+    email = _require_session()
     balances = user.get_balances()
     eur_balance = balances.pop("EUR", 0)
 

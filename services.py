@@ -10,8 +10,13 @@ def get_all_coins() -> list[Coin]:
     """Returns a Coin object for every coin in the database."""
     conn = sqlite3.connect("cryptodata.sqlite")
     with conn:
-        coin_ids = [row[0] for row in conn.execute("SELECT coin_id FROM coins").fetchall()]
-    return [Coin(cid) for cid in coin_ids]
+        rows = conn.execute(
+            "SELECT c.coin_id, c.coin_name, c.coin_img, cp.price "
+            "FROM coins c "
+            "JOIN coins_prices cp ON c.coin_id = cp.coin_id "
+            "WHERE cp.date = (SELECT MAX(date) FROM coins_prices WHERE coin_id = c.coin_id)"
+        ).fetchall()
+    return [Coin(cid, name, img, price) for cid, name, img, price in rows]
 
 
 def display_todays_prices(coins: list[Coin]) -> None:
