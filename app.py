@@ -1,8 +1,10 @@
 import os
 import uuid
-
+import subprocess
 from bottle import redirect, request, response, route, run, static_file, template
-
+import json
+import threading
+from market_api import SUPPORTED_COINS  # needed so we know coins_total
 from auth import AuthManager
 from coin import Coin
 from price_updater import is_price_current, update_coin_prices
@@ -11,7 +13,14 @@ from user import User
 
 # In-memory session store: {session_id: email}
 _sessions: dict[str, str] = {}
-
+_setup_state: dict = {
+    "status": "idle",  # idle | starting | seeding_users | seeding_coins
+    # | fetching_prices | creating_wallets | done
+    "coins_done": 0,
+    "coins_total": 0,
+    "current_coin": "",
+}
+#change
 
 def _require_session() -> str:
     """Returns the email for the current session, or redirects to login."""
@@ -41,7 +50,14 @@ def serve_temp(filename):
 # ------------------------------------------------------------------
 
 @route("/")
-def show_login():
+def show_login(): #change
+    if not os.path.exists("cryptodata.sqlite"):
+        # Only kick off seeding once
+        if _setup_state["status"] == "idle":
+            _setup_state["status"] = "starting"
+            threading.Thread(target=_run_setup, daemon=True).start()
+        return template("setup")
+
     return template("login", error=None, email=None, password=None)
 
 
@@ -279,6 +295,57 @@ def handle_trade(coin_id):
         flash=flash,
         flash_type=flash_type,
     )
+
+
+@route("/setup/status")
+def setup_status(): #change
+    """Polled by setup.html every 1.5 s to report real seeding progress."""
+    response.content_type = "application/json"
+    return json.dumps(_setup_state)
+
+
+def _run_setup(): #change
+    """
+    Runs every seeding step in order, updating _setup_state as it goes
+    so the frontend can display accurate progress.
+    """
+    # -- step 1: seed users --
+    _setup_state["status"] = "seeding_users"
+    subprocess.run(["python", "seed_users.py"], check=True)
+
+    # -- step 2: create tables + coin metadata --
+    _setup_state["status"] = "seeding_coins"
+    subprocess.run(["python", "create_tables.py"], check=True)
+
+    # populate coins table inline so we can track per-coin price progress
+    from seed_data import populate_coins_table
+    populate_coins_table()
+
+    # -- step 3: fetch price history coin by coin --
+    from market_api import SUPPORTED_COINS
+    from price_updater import update_coin_prices
+
+    _setup_state["status"] = "fetching_prices"
+    _setup_state["coins_total"] = len(SUPPORTED_COINS)
+    _setup_state["coins_done"] = 0
+
+    for coin_id in SUPPORTED_COINS:
+        _setup_state["current_coin"] = coin_id
+        update_coin_prices(coin_id)
+        _setup_state["coins_done"] += 1
+
+    _setup_state["current_coin"] = ""
+
+    # -- step 4: create wallets --
+    _setup_state["status"] = "creating_wallets"
+    from seed_data import create_user_wallets
+    create_user_wallets()
+
+    # -- step 5: seed transactions (optional, keep if you use it) --
+    subprocess.run(["python", "seed_transactions.py"], check=True)
+
+    # -- done --
+    _setup_state["status"] = "done"
 
 
 if __name__ == "__main__":

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Setting up — CRYPTO PLATFORM</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:      #0b0e11;
+            --surface: #161a1f;
+            --surface2:#1e2329;
+            --border:  #2b3139;
+            --accent:  #f0b90b;
+            --up:      #0ecb81;
+            --text:    #eaecef;
+            --muted:   #848e9c;
+            --mono:    'Space Mono', monospace;
+            --sans:    'Syne', sans-serif;
+        }
+
+        html, body {
+            height: 100%;
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--sans);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image:
+                linear-gradient(rgba(240,185,11,.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(240,185,11,.03) 1px, transparent 1px);
+            background-size: 48px 48px;
+            pointer-events: none;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            width: 700px; height: 700px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(240,185,11,.07) 0%, transparent 65%);
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        /* ════════ CARD ════════ */
+        .card {
+            position: relative; z-index: 1;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 3rem 3.5rem;
+            text-align: center;
+            max-width: 480px; width: 90%;
+            animation: fadeUp .6s ease both;
+        }
+        @keyframes fadeUp {
+            from { opacity:0; transform:translateY(24px); }
+            to   { opacity:1; transform:translateY(0); }
+        }
+
+        /* logo */
+        .logo {
+            font-family: var(--mono); font-size: .8rem; font-weight: 700;
+            letter-spacing: .16em; color: var(--accent); text-transform: uppercase;
+            display: flex; align-items: center; justify-content: center; gap: .6rem;
+            margin-bottom: 2.5rem;
+        }
+        .logo-dot {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: var(--accent); box-shadow: 0 0 10px var(--accent);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%,100% { opacity:1; box-shadow:0 0 8px var(--accent); }
+            50%      { opacity:.3; box-shadow:0 0 20px var(--accent); }
+        }
+
+        /* spinner */
+        .spinner-wrap {
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 2rem;
+        }
+        .spinner {
+            width: 64px; height: 64px; border-radius: 50%;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            animation: spin 1s linear infinite;
+        }
+        .spinner-inner {
+            position: absolute;
+            width: 46px; height: 46px; border-radius: 50%;
+            border: 2px solid transparent;
+            border-bottom-color: var(--up);
+            animation: spin 1.6s linear infinite reverse;
+        }
+        @keyframes spin { to { transform:rotate(360deg); } }
+
+        .headline {
+            font-size: 1.35rem; font-weight: 800;
+            letter-spacing: -.01em; margin-bottom: .75rem;
+        }
+        .subline {
+            font-family: var(--mono); font-size: .72rem;
+            color: var(--muted); line-height: 1.7;
+        }
+
+        /* steps */
+        .steps {
+            margin-top: 2rem;
+            display: flex; flex-direction: column; gap: .55rem;
+            text-align: left;
+        }
+        .step {
+            display: flex; align-items: center; gap: .75rem;
+            font-family: var(--mono); font-size: .72rem;
+            color: var(--muted); opacity: 0;
+            transition: opacity .4s, color .4s;
+        }
+        .step.done   { color: var(--up);   opacity: 1; }
+        .step.active { color: var(--text); opacity: 1; }
+        .step.visible { opacity: 1; }
+
+        .step-icon {
+            width: 20px; height: 20px; border-radius: 50%;
+            background: var(--surface2); border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: .6rem; flex-shrink: 0;
+            transition: background .4s, border-color .4s;
+        }
+        .step.done .step-icon   { background: rgba(14,203,129,.15); border-color: var(--up); }
+        .step.active .step-icon {
+            background: rgba(240,185,11,.1); border-color: var(--accent);
+            animation: pulse-border 1s ease-in-out infinite;
+        }
+        @keyframes pulse-border {
+            0%,100% { border-color: var(--accent); }
+            50%      { border-color: transparent; }
+        }
+
+        /* price fetch sub-step (only shown during step 3) */
+        .coin-progress {
+            margin-top: .4rem; margin-left: 2rem;
+            display: none; flex-direction: column; gap: .3rem;
+        }
+        .coin-progress.show { display: flex; }
+        .coin-progress-label {
+            font-family: var(--mono); font-size: .65rem; color: var(--muted);
+            display: flex; justify-content: space-between;
+        }
+        .coin-track {
+            height: 3px; background: var(--border); border-radius: 99px; overflow: hidden;
+        }
+        .coin-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--up));
+            border-radius: 99px; width: 0%;
+            transition: width .4s ease;
+        }
+
+        /* main progress bar */
+        .progress-track {
+            margin-top: 2rem; height: 3px;
+            background: var(--border); border-radius: 99px; overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--up));
+            border-radius: 99px; width: 0%;
+            transition: width .6s ease;
+        }
+
+        /* redirect note */
+        .redirect-note {
+            margin-top: 1.5rem;
+            font-family: var(--mono); font-size: .68rem;
+            color: var(--muted); opacity: 0; transition: opacity .5s;
+        }
+        .redirect-note.show { opacity: 1; }
+        .redirect-note span { color: var(--accent); }
+    </style>
+</head>
+<body>
+
+<div class="card">
+
+    <div class="logo">
+        <span class="logo-dot"></span>
+        AUTIZMUS MAXIMUS
+    </div>
+
+    <div class="spinner-wrap">
+        <div style="position:relative;display:flex;align-items:center;justify-content:center;">
+            <div class="spinner"></div>
+            <div class="spinner-inner"></div>
+        </div>
+    </div>
+
+    <div class="headline">Hang on, we're getting<br>things ready for you.</div>
+    <div class="subline">First-time setup — this only happens once.<br>Fetching price history takes ~2.5 minutes.</div>
+
+    <div class="steps">
+        <div class="step" id="step-0">
+            <div class="step-icon" id="icon-0">○</div>
+            <span>Initialising database</span>
+        </div>
+        <div class="step" id="step-1">
+            <div class="step-icon" id="icon-1">○</div>
+            <span>Seeding user data</span>
+        </div>
+        <div class="step" id="step-2">
+            <div class="step-icon" id="icon-2">○</div>
+            <span>Loading coin metadata</span>
+        </div>
+        <div>
+            <div class="step" id="step-3">
+                <div class="step-icon" id="icon-3">○</div>
+                <span>Fetching price history</span>
+            </div>
+            <!-- coin-level sub-progress, shown only during step 3 -->
+            <div class="coin-progress" id="coin-progress">
+                <div class="coin-progress-label">
+                    <span id="coin-label">waiting...</span>
+                    <span id="coin-pct">0%</span>
+                </div>
+                <div class="coin-track"><div class="coin-fill" id="coin-fill"></div></div>
+            </div>
+        </div>
+        <div class="step" id="step-4">
+            <div class="step-icon" id="icon-4">○</div>
+            <span>Creating wallets</span>
+        </div>
+        <div class="step" id="step-5">
+            <div class="step-icon" id="icon-5">○</div>
+            <span>All done!</span>
+        </div>
+    </div>
+
+    <div class="progress-track">
+        <div class="progress-fill" id="progress"></div>
+    </div>
+
+    <div class="redirect-note" id="redirect-note">
+        Redirecting to login in <span id="countdown">3</span>s...
+    </div>
+
+</div>
+
+<script>
+    // Maps status strings from /setup/status to step indices
+    // Steps: 0=db, 1=users, 2=coins_meta, 3=prices, 4=wallets, 5=done
+    const STEP_MAP = {
+        'seeding_users':    0,
+        'seeding_coins':    1,
+        'fetching_prices':  2,
+        'creating_wallets': 3,
+        'done':             4,
+    };
+
+    // Visual step count (we have 6 visual steps: 0-5)
+    // but the status drives them at a coarser level.
+    // We drive the visual steps from the status directly.
+
+    let lastStep = -1;
+    let redirecting = false;
+
+    function setStep(i, state) {
+        const el   = document.getElementById('step-' + i);
+        const icon = document.getElementById('icon-' + i);
+        if (!el) return;
+        el.className   = 'step ' + state;
+        icon.textContent = state === 'done' ? '✓' : state === 'active' ? '…' : '○';
+    }
+
+    function markDoneUpTo(i) {
+        for (let j = 0; j < i; j++) setStep(j, 'done');
+    }
+
+    async function poll() {
+        try {
+            const res  = await fetch('/setup/status');
+            const data = await res.json();
+
+            const status   = data.status;       // e.g. 'fetching_prices'
+            const coinsDone = data.coins_done;  // int: how many coins fetched
+            const coinsTotal= data.coins_total; // int: total coins to fetch
+            const currentCoin = data.current_coin || '';
+
+            // map status to visual step index
+            // statuses: starting, seeding_users, seeding_coins,
+            //           fetching_prices, creating_wallets, done
+            let visualStep = 0;
+            if (status === 'starting')           visualStep = 0;
+            if (status === 'seeding_users')      visualStep = 1;
+            if (status === 'seeding_coins')      visualStep = 2;
+            if (status === 'fetching_prices')    visualStep = 3;
+            if (status === 'creating_wallets')   visualStep = 4;
+            if (status === 'done')               visualStep = 5;
+
+            // update steps
+            markDoneUpTo(visualStep);
+            if (status !== 'done') setStep(visualStep, 'active');
+
+            // main progress bar: based on overall progress
+            let pct = 0;
+            if (status === 'fetching_prices' && coinsTotal > 0) {
+                // steps 0-2 = 40%, prices = 40%, wallets = 10%, done = 10%
+                pct = 40 + Math.round((coinsDone / coinsTotal) * 40);
+            } else {
+                pct = Math.round((visualStep / 6) * 100);
+            }
+            document.getElementById('progress').style.width = pct + '%';
+
+            // coin sub-progress (only during price fetching)
+            const cp = document.getElementById('coin-progress');
+            if (status === 'fetching_prices' && coinsTotal > 0) {
+                cp.classList.add('show');
+                const coinPct = Math.round((coinsDone / coinsTotal) * 100);
+                document.getElementById('coin-fill').style.width  = coinPct + '%';
+                document.getElementById('coin-pct').textContent   = coinPct + '%';
+                document.getElementById('coin-label').textContent =
+                    currentCoin ? currentCoin : coinsDone + ' / ' + coinsTotal + ' coins';
+            } else {
+                cp.classList.remove('show');
+            }
+
+            // done?
+            if (status === 'done' && !redirecting) {
+                redirecting = true;
+                setStep(5, 'done');
+                document.getElementById('progress').style.width = '100%';
+                startCountdown();
+                return; // stop polling
+            }
+
+        } catch (e) {
+            // server might not be ready yet, keep trying
+        }
+
+        setTimeout(poll, 1500);
+    }
+
+    function startCountdown() {
+        const note = document.getElementById('redirect-note');
+        const cdEl = document.getElementById('countdown');
+        note.classList.add('show');
+        let remaining = 3;
+        cdEl.textContent = remaining;
+        const iv = setInterval(() => {
+            remaining--;
+            cdEl.textContent = remaining;
+            if (remaining <= 0) {
+                clearInterval(iv);
+                window.location.href = '/';
+            }
+        }, 1000);
+    }
+
+    // kick off polling after a short delay
+    setTimeout(poll, 800);
+</script>
+
+</body>
+</html>
