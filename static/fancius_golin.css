@@ -6,13 +6,11 @@
 }
 
 body {
-    background-image: url("back.png");
+    min-height: 100vh;
+    background-image: url('/static/login_bg.svg');
     background-size: cover;
     background-position: center;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    background-repeat: no-repeat;
 }
 
 .login-box {

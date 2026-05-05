@@ -1,0 +1,214 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <style>
+      .bg { fill: #0b0e11; }
+      .grid-h { stroke: rgba(240,185,11,0.04); stroke-width: 1; }
+      .grid-v { stroke: rgba(240,185,11,0.04); stroke-width: 1; }
+      .candle-up   { fill: #0ecb81; }
+      .candle-down { fill: #f6465d; }
+      .wick-up   { stroke: #0ecb81; stroke-width: 1.5; }
+      .wick-down { stroke: #f6465d; stroke-width: 1.5; }
+      .chart-line { fill: none; stroke: rgba(240,185,11,0.35); stroke-width: 1.5; }
+      .chart-area { fill: url(#areaGrad); }
+      .ring { fill: none; stroke-width: 1; }
+      .ring-1 { stroke: rgba(240,185,11,0.10); }
+      .ring-2 { stroke: rgba(14,203,129,0.07); }
+      .ring-3 { stroke: rgba(240,185,11,0.05); }
+      .dot  { fill: rgba(240,185,11,0.5); }
+      .dot2 { fill: rgba(14,203,129,0.4); }
+      .node-box { fill: rgba(22,26,31,0.9); stroke: rgba(43,49,57,1); stroke-width: 1; rx: 6; }
+      .node-text { font-family: monospace; font-size: 11px; fill: rgba(132,142,156,0.9); }
+      .node-val-up   { font-family: monospace; font-size: 12px; font-weight: bold; fill: #0ecb81; }
+      .node-val-down { font-family: monospace; font-size: 12px; font-weight: bold; fill: #f6465d; }
+      .scan { fill: rgba(240,185,11,0.03); }
+      .ticker-text { font-family: monospace; font-size: 11px; fill: rgba(132,142,156,0.6); }
+      .ticker-up   { font-family: monospace; font-size: 11px; fill: rgba(14,203,129,0.7); }
+      .ticker-down { font-family: monospace; font-size: 11px; fill: rgba(246,70,93,0.7); }
+      .fade-edge { fill: url(#fadeGrad); }
+    </style>
+
+    <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="rgba(240,185,11,0.18)"/>
+      <stop offset="100%" stop-color="rgba(240,185,11,0)"/>
+    </linearGradient>
+
+    <!-- vignette to fade into the login card -->
+    <radialGradient id="vigGrad" cx="50%" cy="50%" r="70%">
+      <stop offset="40%" stop-color="rgba(11,14,17,0)"/>
+      <stop offset="100%" stop-color="rgba(11,14,17,0.92)"/>
+    </radialGradient>
+
+    <!-- left fade for chart -->
+    <linearGradient id="fadeGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="rgba(11,14,17,1)"/>
+      <stop offset="15%"  stop-color="rgba(11,14,17,0)"/>
+      <stop offset="85%"  stop-color="rgba(11,14,17,0)"/>
+      <stop offset="100%" stop-color="rgba(11,14,17,1)"/>
+    </linearGradient>
+  </defs>
+
+  <!-- base background -->
+  <rect class="bg" width="1440" height="900"/>
+
+  <!-- ── grid lines ── -->
+  <!-- horizontal -->
+  <line class="grid-h" x1="0" y1="100" x2="1440" y2="100"/>
+  <line class="grid-h" x1="0" y1="200" x2="1440" y2="200"/>
+  <line class="grid-h" x1="0" y1="300" x2="1440" y2="300"/>
+  <line class="grid-h" x1="0" y1="400" x2="1440" y2="400"/>
+  <line class="grid-h" x1="0" y1="500" x2="1440" y2="500"/>
+  <line class="grid-h" x1="0" y1="600" x2="1440" y2="600"/>
+  <line class="grid-h" x1="0" y1="700" x2="1440" y2="700"/>
+  <line class="grid-h" x1="0" y1="800" x2="1440" y2="800"/>
+  <!-- vertical -->
+  <line class="grid-v" x1="120"  y1="0" x2="120"  y2="900"/>
+  <line class="grid-v" x1="240"  y1="0" x2="240"  y2="900"/>
+  <line class="grid-v" x1="360"  y1="0" x2="360"  y2="900"/>
+  <line class="grid-v" x1="480"  y1="0" x2="480"  y2="900"/>
+  <line class="grid-v" x1="600"  y1="0" x2="600"  y2="900"/>
+  <line class="grid-v" x1="720"  y1="0" x2="720"  y2="900"/>
+  <line class="grid-v" x1="840"  y1="0" x2="840"  y2="900"/>
+  <line class="grid-v" x1="960"  y1="0" x2="960"  y2="900"/>
+  <line class="grid-v" x1="1080" y1="0" x2="1080" y2="900"/>
+  <line class="grid-v" x1="1200" y1="0" x2="1200" y2="900"/>
+  <line class="grid-v" x1="1320" y1="0" x2="1320" y2="900"/>
+
+  <!-- ── concentric rings (top-left orb) ── -->
+  <circle class="ring ring-1" cx="120" cy="130" r="220"/>
+  <circle class="ring ring-2" cx="120" cy="130" r="340"/>
+  <circle class="ring ring-3" cx="120" cy="130" r="460"/>
+
+  <!-- ── concentric rings (bottom-right orb) ── -->
+  <circle class="ring ring-1" cx="1320" cy="780" r="200"/>
+  <circle class="ring ring-2" cx="1320" cy="780" r="310"/>
+  <circle class="ring ring-3" cx="1320" cy="780" r="430"/>
+
+  <!-- ── area chart (BTC-style) ── -->
+  <path class="chart-area" d="
+    M 60 580
+    C 110 560 150 520 200 510
+    C 250 500 280 540 330 530
+    C 370 522 400 480 450 455
+    C 490 435 520 460 560 440
+    C 600 420 630 390 680 370
+    C 720 355 750 380 800 360
+    C 840 343 870 310 920 295
+    C 960 282 1000 305 1050 290
+    C 1090 277 1120 250 1170 235
+    C 1210 222 1250 245 1300 230
+    C 1340 218 1380 200 1440 190
+    L 1440 900 L 60 900 Z
+  "/>
+  <path class="chart-line" d="
+    M 60 580
+    C 110 560 150 520 200 510
+    C 250 500 280 540 330 530
+    C 370 522 400 480 450 455
+    C 490 435 520 460 560 440
+    C 600 420 630 390 680 370
+    C 720 355 750 380 800 360
+    C 840 343 870 310 920 295
+    C 960 282 1000 305 1050 290
+    C 1090 277 1120 250 1170 235
+    C 1210 222 1250 245 1300 230
+    C 1340 218 1380 200 1440 190
+  "/>
+
+  <!-- ── candlestick chart (mid-section) ── -->
+  <!-- wicks first, then bodies on top -->
+  <line class="wick-up"   x1="105" y1="430" x2="105" y2="480"/>
+  <line class="wick-down" x1="145" y1="420" x2="145" y2="475"/>
+  <line class="wick-up"   x1="185" y1="400" x2="185" y2="460"/>
+  <line class="wick-down" x1="225" y1="395" x2="225" y2="450"/>
+  <line class="wick-up"   x1="265" y1="370" x2="265" y2="430"/>
+  <line class="wick-down" x1="305" y1="380" x2="305" y2="440"/>
+  <line class="wick-up"   x1="345" y1="340" x2="345" y2="400"/>
+  <line class="wick-up"   x1="385" y1="330" x2="385" y2="390"/>
+  <line class="wick-down" x1="425" y1="345" x2="425" y2="405"/>
+  <line class="wick-up"   x1="465" y1="310" x2="465" y2="370"/>
+  <line class="wick-up"   x1="505" y1="295" x2="505" y2="355"/>
+  <line class="wick-down" x1="545" y1="310" x2="545" y2="365"/>
+  <line class="wick-up"   x1="585" y1="280" x2="585" y2="340"/>
+
+  <!-- candle bodies -->
+  <rect class="candle-up"   x="97"  y="448" width="16" height="24"/>
+  <rect class="candle-down" x="137" y="435" width="16" height="28"/>
+  <rect class="candle-up"   x="177" y="418" width="16" height="30"/>
+  <rect class="candle-down" x="217" y="410" width="16" height="26"/>
+  <rect class="candle-up"   x="257" y="385" width="16" height="32"/>
+  <rect class="candle-down" x="297" y="395" width="16" height="28"/>
+  <rect class="candle-up"   x="337" y="355" width="16" height="30"/>
+  <rect class="candle-up"   x="377" y="344" width="16" height="28"/>
+  <rect class="candle-down" x="417" y="358" width="16" height="30"/>
+  <rect class="candle-up"   x="457" y="322" width="16" height="32"/>
+  <rect class="candle-up"   x="497" y="308" width="16" height="30"/>
+  <rect class="candle-down" x="537" y="320" width="16" height="28"/>
+  <rect class="candle-up"   x="577" y="292" width="16" height="30"/>
+
+  <!-- ── floating stat cards ── -->
+  <!-- BTC -->
+  <rect class="node-box" x="40"  y="60"  width="130" height="54" rx="6"/>
+  <text class="node-text" x="52" y="80">BTC / USDT</text>
+  <text class="node-val-up" x="52" y="100">67,430.20</text>
+  <text class="ticker-up"   x="140" y="100">+2.4%</text>
+
+  <!-- ETH -->
+  <rect class="node-box" x="200" y="45"  width="130" height="54" rx="6"/>
+  <text class="node-text" x="212" y="65">ETH / USDT</text>
+  <text class="node-val-up" x="212" y="85">3,512.80</text>
+  <text class="ticker-up"   x="300" y="85">+1.8%</text>
+
+  <!-- SOL -->
+  <rect class="node-box" x="360" y="55"  width="130" height="54" rx="6"/>
+  <text class="node-text" x="372" y="75">SOL / USDT</text>
+  <text class="node-val-down" x="372" y="95">143.60</text>
+  <text class="ticker-down"   x="440" y="95">-0.9%</text>
+
+  <!-- BNB -->
+  <rect class="node-box" x="1070" y="60"  width="130" height="54" rx="6"/>
+  <text class="node-text" x="1082" y="80">BNB / USDT</text>
+  <text class="node-val-up" x="1082" y="100">568.40</text>
+  <text class="ticker-up"   x="1162" y="100">+3.1%</text>
+
+  <!-- XRP -->
+  <rect class="node-box" x="1240" y="45"  width="140" height="54" rx="6"/>
+  <text class="node-text" x="1252" y="65">XRP / USDT</text>
+  <text class="node-val-down" x="1252" y="85">0.5821</text>
+  <text class="ticker-down"   x="1322" y="85">-1.2%</text>
+
+  <!-- volume card bottom-left -->
+  <rect class="node-box" x="40" y="800" width="160" height="54" rx="6"/>
+  <text class="node-text"   x="52"  y="820">24h Volume</text>
+  <text class="node-val-up" x="52"  y="840">$48.2B</text>
+
+  <!-- market cap bottom-right -->
+  <rect class="node-box" x="1240" y="800" width="160" height="54" rx="6"/>
+  <text class="node-text"   x="1252" y="820">Market Cap</text>
+  <text class="node-val-up" x="1252" y="840">$2.31T</text>
+
+  <!-- ── scattered data dots ── -->
+  <circle class="dot"  cx="680"  cy="200" r="2.5"/>
+  <circle class="dot2" cx="760"  cy="340" r="2"/>
+  <circle class="dot"  cx="840"  cy="155" r="2"/>
+  <circle class="dot2" cx="920"  cy="270" r="2.5"/>
+  <circle class="dot"  cx="1000" cy="190" r="2"/>
+  <circle class="dot2" cx="1080" cy="310" r="2"/>
+  <circle class="dot"  cx="1160" cy="140" r="2.5"/>
+  <circle class="dot2" cx="1240" cy="260" r="2"/>
+  <circle class="dot"  cx="200"  cy="700" r="2"/>
+  <circle class="dot2" cx="320"  cy="660" r="2.5"/>
+  <circle class="dot"  cx="480"  cy="720" r="2"/>
+  <circle class="dot2" cx="620"  cy="690" r="2"/>
+  <circle class="dot"  cx="780"  cy="740" r="2.5"/>
+  <circle class="dot2" cx="980"  cy="710" r="2"/>
+  <circle class="dot"  cx="1140" cy="750" r="2"/>
+
+  <!-- ── scan line (horizontal accent) ── -->
+  <rect class="scan" x="0" y="448" width="1440" height="2"/>
+
+  <!-- ── left+right edge fade so card area is clean ── -->
+  <rect class="fade-edge" x="0" y="0" width="1440" height="900"/>
+
+  <!-- ── vignette overlay ── -->
+  <rect fill="url(#vigGrad)" width="1440" height="900"/>
+</svg>
