@@ -2,7 +2,7 @@ import os
 import subprocess
 
 from cli_inputs import get_int_input
-from price_updater import is_price_current, update_coin_prices
+from updater import *
 from services import (
     display_todays_prices,
     get_all_coins,
@@ -12,16 +12,9 @@ from services import (
     run_register,
 )
 
-if not os.path.exists("cryptodata.sqlite"):
-    subprocess.run(["python", "seed_users.py"], check=True)
-    subprocess.run(["python", "create_tables.py"], check=True)
-    subprocess.run(["python", "seed_data.py"], check=True)
-    subprocess.run(["python", "seed_transactions.py"], check=True)
-
+check_database()
+update_all_prices()
 coins = get_all_coins()
-for coin in coins:
-    if not is_price_current(coin.get_coin_id()):
-        update_coin_prices(coin.get_coin_id())
 
 print("Welcome!")
 print("Navigate menus by entering the number next to your chosen option.")

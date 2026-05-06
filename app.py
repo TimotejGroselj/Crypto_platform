@@ -7,7 +7,7 @@ import threading
 from market_api import SUPPORTED_COINS  # needed so we know coins_total
 from auth import AuthManager
 from coin import Coin
-from price_updater import is_price_current, update_coin_prices
+from updater import is_price_current, update_coin_prices
 from services import get_all_coins
 from user import User
 
@@ -323,7 +323,7 @@ def _run_setup(): #change
 
     # -- step 3: fetch price history coin by coin --
     from market_api import SUPPORTED_COINS
-    from price_updater import update_coin_prices
+    from updater import update_coin_prices
 
     _setup_state["status"] = "fetching_prices"
     _setup_state["coins_total"] = len(SUPPORTED_COINS)

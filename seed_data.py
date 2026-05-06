@@ -7,7 +7,7 @@ import sqlite3
 
 from crypto_utils import hash_value
 from market_api import SUPPORTED_COINS, fetch_coin_metadata
-from price_updater import update_coin_prices
+from updater import update_coin_prices
 
 
 def populate_coins_table() -> None:

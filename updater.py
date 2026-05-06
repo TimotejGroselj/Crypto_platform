@@ -2,6 +2,10 @@ import sqlite3
 from datetime import datetime, timezone
 
 from market_api import fetch_coin_price_history
+import os
+import subprocess
+
+from services import get_all_coins
 
 
 def _today() -> str:
@@ -24,9 +28,11 @@ def update_coin_prices(coin_id: str) -> None:
     Fetches price history from the API and inserts any missing dates into
     coins_prices. If today's price already exists, it is updated in place.
     """
+    
+    if is_price_current(coin_id):
+        return 
     conn = sqlite3.connect("cryptodata.sqlite")
     cur = conn.cursor()
-
     price_history = fetch_coin_price_history(coin_id)
 
     with conn:
@@ -53,3 +59,23 @@ def update_coin_prices(coin_id: str) -> None:
                     (coin_id, date_str, price),
                 )
             prev_date = date_str
+
+def update_all_prices() -> None:
+    """Checks if each coin's price data is current, and updates it if not."""
+    coins = get_all_coins()
+    for coin in coins:
+        update_coin_prices(coin.get_coin_id())
+            
+def check_database() -> None:
+    """
+    Checks if the database file exists. If not, runs the seed scripts to create the database and populate it with initial data. Then checks if each coin's price data is current, and updates it if not.
+    """
+    
+    if not os.path.exists("cryptodata.sqlite"):
+        print("Seeding database...")
+        subprocess.run(["python", "seed_users.py"], check=True)
+        subprocess.run(["python", "create_tables.py"], check=True)
+        subprocess.run(["python", "seed_data.py"], check=True)
+        subprocess.run(["python", "seed_transactions.py"], check=True)
+
+
