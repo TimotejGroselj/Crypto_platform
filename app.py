@@ -10,6 +10,9 @@ from coin import Coin
 from updater import is_price_current, update_coin_prices
 from services import get_all_coins
 from user import User
+from create_tables import *
+from updater import *
+from seed_data import *
 
 # In-memory session store: {session_id: email}
 _sessions: dict[str, str] = {}
@@ -49,14 +52,15 @@ def serve_temp(filename):
 # ------------------------------------------------------------------
 
 @route("/")
-def show_login():
-    if not os.path.exists("cryptodata.sqlite"):
-        # Only kick off seeding once
-        if _setup_state["status"] == "idle":
-            _setup_state["status"] = "starting"
-            threading.Thread(target=_run_setup, daemon=True).start()
-        return template("setup")
+def show_setup():
+    if _setup_state["status"] == "idle":
+        _setup_state["status"] = "starting"
+        threading.Thread(target=_run_setup, daemon=True).start()
+    return template("setup")
 
+
+@route("/login")
+def show_login():
     return template("login", error=None, email=None, password=None)
 
 
@@ -115,7 +119,7 @@ def handle_logout():
     response.delete_cookie("session_id")
     for pic in os.listdir("temp"):
         os.remove(f"temp/{pic}")
-    return redirect("/")
+    return redirect("/login")
 
 
 # ------------------------------------------------------------------
@@ -308,22 +312,18 @@ def _run_setup():
     Runs every seeding step in order, updating _setup_state as it goes
     so the frontend can display accurate progress.
     """
-    # -- step 1: seed users --
-    _setup_state["status"] = "seeding_users"
-    subprocess.run(["python", "seed_users.py"], check=True)
-
-    # -- step 2: create tables + coin metadata --
+    if not os.path.exists("cryptodata.sqlite"):
+        create_tables()
+        
     _setup_state["status"] = "seeding_coins"
-    subprocess.run(["python", "create_tables.py"], check=True)
-
-    # populate coins table inline so we can track per-coin price progress
-    from seed_data import populate_coins_table
-    populate_coins_table()
-
-    # -- step 3: fetch price history coin by coin --
-    from market_api import SUPPORTED_COINS
-    from updater import update_coin_prices
-
+    with sqlite3.connect("cryptodata.sqlite") as conn:
+        test = conn.execute("SELECT * FROM coins").fetchone()
+    if test is None:
+        print("Populating coins table...")
+        populate_coins_table()
+        
+        
+        
     _setup_state["status"] = "fetching_prices"
     _setup_state["coins_total"] = len(SUPPORTED_COINS)
     _setup_state["coins_done"] = 0
@@ -334,15 +334,19 @@ def _run_setup():
         _setup_state["coins_done"] += 1
 
     _setup_state["current_coin"] = ""
-
-    # -- step 4: create wallets --
+    
     _setup_state["status"] = "creating_wallets"
-    from seed_data import create_user_wallets
-    create_user_wallets()
+    with sqlite3.connect("cryptodata.sqlite") as conn:
+        test = conn.execute("SELECT * FROM assets").fetchone()
+    if test is None:
+        create_user_wallets()
 
-    # -- step 5: seed transactions (optional, keep if you use it) --
-    subprocess.run(["python", "seed_transactions.py"], check=True)
-
+    with sqlite3.connect("cryptodata.sqlite") as conn:
+        test = conn.execute("SELECT * FROM transactions").fetchone()
+    if test is None:
+        print("Seeding transactions...")
+        seed_transactions()
+            
     # -- done --
     _setup_state["status"] = "done"
 

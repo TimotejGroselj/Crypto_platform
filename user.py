@@ -11,12 +11,12 @@ class User:
 
     def __init__(self, email: str):
         self.email = email
-        
-        cur = conn.cursor()
-        row = cur.execute(
-            "SELECT user_id, username FROM users WHERE email = ?", (email,)
-        ).fetchone()
-        conn.close()
+        with sqlite3.connect("cryptodata.sqlite") as conn:
+            cur = conn.cursor()
+            row = cur.execute(
+                "SELECT user_id, username FROM users WHERE email = ?", (email,)
+            ).fetchone()
+       
         self.user_id: int = row[0]
         self.username: str = row[1]
 
@@ -33,13 +33,13 @@ class User:
 
     def get_balances(self) -> dict[str, float]:
         """Returns {coin_id: amount} for all assets in this user's wallet."""
-        
-        cur = conn.cursor()
-        rows = cur.execute(
-            "SELECT coin_id, money FROM assets WHERE wallet_id = ?",
-            (self._wallet_id,),
-        ).fetchall()
-        conn.close()
+        with sqlite3.connect("cryptodata.sqlite") as conn:
+            cur = conn.cursor()
+            rows = cur.execute(
+                "SELECT coin_id, money FROM assets WHERE wallet_id = ?",
+                (self._wallet_id,),
+            ).fetchall()
+
         return {coin_id: amount for coin_id, amount in rows}
 
     def display_assets(self) -> None:
@@ -50,14 +50,14 @@ class User:
 
     def get_transaction_history(self) -> list[tuple]:
         """Returns a list of (coin_name, quantity, date, type) for all valid transactions."""
-        
-        cur = conn.cursor()
-        rows = cur.execute(
-            "SELECT coin_id, quantity, date, type FROM transactions "
-            "WHERE wallet_id = ? AND valid = 1 ORDER BY date DESC",
-            (self._wallet_id,),
-        ).fetchall()
-        conn.close()
+        with sqlite3.connect("cryptodata.sqlite") as conn:
+            cur = conn.cursor()
+            rows = cur.execute(
+                "SELECT coin_id, quantity, date, type FROM transactions "
+                "WHERE wallet_id = ? AND valid = 1 ORDER BY date DESC",
+                (self._wallet_id,),
+            ).fetchall()
+
         return [(Coin(coin_id).get_coin_name(), qty, date, tx_type)
                 for coin_id, qty, date, tx_type in rows]
 
@@ -70,21 +70,19 @@ class User:
         Adds delta to the EUR balance (negative delta = withdrawal).
         Returns False if a withdrawal would exceed the available balance.
         """
-        
-        cur = conn.cursor()
-        current = cur.execute(
-            "SELECT money FROM assets WHERE wallet_id = ? AND coin_id = 'EUR'",
-            (self._wallet_id,),
-        ).fetchone()[0]
-        if delta < 0 and current < abs(delta):
-            conn.close()
-            return False
-        cur.execute(
-            "UPDATE assets SET money = ? WHERE wallet_id = ? AND coin_id = 'EUR'",
-            (current + delta, self._wallet_id),
-        )
-        conn.commit()
-        conn.close()
+        with sqlite3.connect("cryptodata.sqlite") as conn:
+            cur = conn.cursor()
+            current = cur.execute(
+                "SELECT money FROM assets WHERE wallet_id = ? AND coin_id = 'EUR'",
+                (self._wallet_id,),
+            ).fetchone()[0]
+            if delta < 0 and current < abs(delta):
+                return False
+            cur.execute(
+                "UPDATE assets SET money = ? WHERE wallet_id = ? AND coin_id = 'EUR'",
+                (current + delta, self._wallet_id),
+            )
+
         return True
 
     # ------------------------------------------------------------------
@@ -108,60 +106,56 @@ class User:
             self._record_transaction(coin.get_coin_id(), 0, action, valid=False)
             return False
 
-        
-        cur = conn.cursor()
-        eur = cur.execute(
-            "SELECT money FROM assets WHERE wallet_id = ? AND coin_id = 'EUR'",
-            (self._wallet_id,),
-        ).fetchone()[0]
-        coin_holdings = cur.execute(
-            "SELECT money FROM assets WHERE wallet_id = ? AND coin_id = ?",
-            (self._wallet_id, coin.get_coin_id()),
-        ).fetchone()[0]
-        coin_price = coin.get_todays_price()
+        with sqlite3.connect("cryptodata.sqlite") as conn:
+            cur = conn.cursor()
+            eur = cur.execute(
+                "SELECT money FROM assets WHERE wallet_id = ? AND coin_id = 'EUR'",
+                (self._wallet_id,),
+            ).fetchone()[0]
+            coin_holdings = cur.execute(
+                "SELECT money FROM assets WHERE wallet_id = ? AND coin_id = ?",
+                (self._wallet_id, coin.get_coin_id()),
+            ).fetchone()[0]
+            coin_price = coin.get_todays_price()
 
-        if action == 1:  # buy
-            spend_eur = eur * (percentage / 100)
-            coins_acquired = spend_eur / coin_price
-            cur.execute(
-                "UPDATE assets SET money = ? WHERE wallet_id = ? AND coin_id = ?",
-                (coin_holdings + coins_acquired, self._wallet_id, coin.get_coin_id()),
-            )
-            cur.execute(
-                "UPDATE assets SET money = ? WHERE wallet_id = ? AND coin_id = 'EUR'",
-                (eur - spend_eur, self._wallet_id),
-            )
-            tx_quantity = spend_eur
-        else:  # sell
-            coins_sold = coin_holdings * (percentage / 100)
-            eur_received = coins_sold * coin_price
-            cur.execute(
-                "UPDATE assets SET money = ? WHERE wallet_id = ? AND coin_id = ?",
-                (coin_holdings - coins_sold, self._wallet_id, coin.get_coin_id()),
-            )
-            cur.execute(
-                "UPDATE assets SET money = ? WHERE wallet_id = ? AND coin_id = 'EUR'",
-                (eur + eur_received, self._wallet_id),
-            )
-            tx_quantity = eur_received
+            if action == 1:  # buy
+                spend_eur = eur * (percentage / 100)
+                coins_acquired = spend_eur / coin_price
+                cur.execute(
+                    "UPDATE assets SET money = ? WHERE wallet_id = ? AND coin_id = ?",
+                    (coin_holdings + coins_acquired, self._wallet_id, coin.get_coin_id()),
+                )
+                cur.execute(
+                    "UPDATE assets SET money = ? WHERE wallet_id = ? AND coin_id = 'EUR'",
+                    (eur - spend_eur, self._wallet_id),
+                )
+                tx_quantity = spend_eur
+            else:  # sell
+                coins_sold = coin_holdings * (percentage / 100)
+                eur_received = coins_sold * coin_price
+                cur.execute(
+                    "UPDATE assets SET money = ? WHERE wallet_id = ? AND coin_id = ?",
+                    (coin_holdings - coins_sold, self._wallet_id, coin.get_coin_id()),
+                )
+                cur.execute(
+                    "UPDATE assets SET money = ? WHERE wallet_id = ? AND coin_id = 'EUR'",
+                    (eur + eur_received, self._wallet_id),
+                )
+                tx_quantity = eur_received
 
-        conn.commit()
-        conn.close()
         self._record_transaction(coin.get_coin_id(), tx_quantity, action, valid=True)
         return True
 
     def _record_transaction(self, coin_id: str, quantity: float, action: int, valid: bool) -> None:
         today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
         tx_type = "buy" if action == 1 else "sell"
-        
-        cur = conn.cursor()
-        cur.execute(
-            "INSERT INTO transactions (wallet_id, coin_id, quantity, date, valid, type) "
-            "VALUES (?, ?, ?, ?, ?, ?)",
-            (self._wallet_id, coin_id, quantity, today, int(valid), tx_type),
-        )
-        conn.commit()
-        conn.close()
+        with sqlite3.connect("cryptodata.sqlite") as conn:
+            cur = conn.cursor()
+            cur.execute(
+                "INSERT INTO transactions (wallet_id, coin_id, quantity, date, valid, type) "
+                "VALUES (?, ?, ?, ?, ?, ?)",
+                (self._wallet_id, coin_id, quantity, today, int(valid), tx_type),
+            )
 
     # ------------------------------------------------------------------
     # CLI interaction helpers
@@ -237,17 +231,15 @@ class User:
         """
         if initial_eur <= 0:
             raise ValueError("Initial EUR balance must be greater than 0.")
-        
-        cur = conn.cursor()
-        coin_ids = [row[0] for row in cur.execute("SELECT coin_id FROM coins").fetchall()]
-        cur.execute(
-            "INSERT INTO assets (wallet_id, coin_id, money) VALUES (?, ?, ?)",
-            (self._wallet_id, "EUR", initial_eur),
-        )
-        for coin_id in coin_ids:
+        with sqlite3.connect("cryptodata.sqlite") as conn:
+            cur = conn.cursor()
+            coin_ids = [row[0] for row in cur.execute("SELECT coin_id FROM coins").fetchall()]
             cur.execute(
                 "INSERT INTO assets (wallet_id, coin_id, money) VALUES (?, ?, ?)",
-                (self._wallet_id, coin_id, 0),
+                (self._wallet_id, "EUR", initial_eur),
             )
-        conn.commit()
-        conn.close()
+            for coin_id in coin_ids:
+                cur.execute(
+                    "INSERT INTO assets (wallet_id, coin_id, money) VALUES (?, ?, ?)",
+                    (self._wallet_id, coin_id, 0),
+                )

@@ -205,7 +205,7 @@
     </div>
 
     <div class="headline">Hang on, we're getting<br>things ready for you.</div>
-    <div class="subline">First-time setup — this only happens once.<br>Fetching price history takes ~2.5 minutes.</div>
+    <div class="subline">Checking database.<br>Fetching price history takes ~2.5 minutes.</div>
 
     <div class="steps">
         <div class="step" id="step-0">
@@ -359,7 +359,7 @@
             cdEl.textContent = remaining;
             if (remaining <= 0) {
                 clearInterval(iv);
-                window.location.href = '/';
+                window.location.href = '/login';
             }
         }, 1000);
     }
