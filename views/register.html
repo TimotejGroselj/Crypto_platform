@@ -22,14 +22,20 @@
         % if error == 'An account with this email already exists.':
             <p class="incorrect-input">{{error}}</p>
         % end
-        <div class="input-group">
-            <input type="text" name = "password" placeholder="Password" value = "{{password or ''}}" required/>
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 17px;">
+            <div class="input-group" style="flex: 1; margin-bottom: 0;">
+                <input type="password" name="confirm_password" placeholder="Password" value="{{password or ''}}" required id="FakePass1"/>
+            </div>
+            <input type="checkbox" onclick="SeePass('FakePass1')" style="width:16px; height:16px; margin:0; flex-shrink:0;">
         </div>
         % if error == 'Please choose a stronger password.':
             <p class="incorrect-input">{{error}}</p>
         % end
-        <div class="input-group">
-            <input type="text" name = "confirm_password" placeholder="Confirm password" required />
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 17px;">
+            <div class="input-group" style="flex: 1; margin-bottom: 0;">
+                <input type="password" name="password" placeholder="Password" value="{{password or ''}}" required id="FakePass2"/>
+            </div>
+            <input type="checkbox" onclick="SeePass('FakePass2')" style="width:16px; height:16px; margin:0; flex-shrink:0;">
         </div>
         % if error == 'Passwords do not match.':
             <p class="incorrect-input">{{error}}</p>
@@ -40,5 +46,16 @@
         <button type="submit">Sign Up</button>
     </form>
 </div>
+<script>
+    function SeePass(id) {
+        var x = document.getElementById(id)
+        if (x.type === "password"){
+            x.type = "text";
+        }
+        else {
+            x.type = "password"
+        }
+    }
+</script>
 </body>
 </html>
