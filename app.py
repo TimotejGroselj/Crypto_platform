@@ -20,7 +20,6 @@ _setup_state: dict = {
     "coins_total": 0,
     "current_coin": "",
 }
-#change
 
 def _require_session() -> str:
     """Returns the email for the current session, or redirects to login."""
@@ -50,7 +49,7 @@ def serve_temp(filename):
 # ------------------------------------------------------------------
 
 @route("/")
-def show_login(): #change
+def show_login():
     if not os.path.exists("cryptodata.sqlite"):
         # Only kick off seeding once
         if _setup_state["status"] == "idle":
@@ -298,13 +297,13 @@ def handle_trade(coin_id):
 
 
 @route("/setup/status")
-def setup_status(): #change
+def setup_status():
     """Polled by setup.html every 1.5 s to report real seeding progress."""
     response.content_type = "application/json"
     return json.dumps(_setup_state)
 
 
-def _run_setup(): #change
+def _run_setup(): 
     """
     Runs every seeding step in order, updating _setup_state as it goes
     so the frontend can display accurate progress.
