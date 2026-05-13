@@ -11,7 +11,7 @@ class User:
 
     def __init__(self, email: str):
         self.email = email
-        conn = sqlite3.connect("cryptodata.sqlite")
+        
         cur = conn.cursor()
         row = cur.execute(
             "SELECT user_id, username FROM users WHERE email = ?", (email,)
@@ -33,7 +33,7 @@ class User:
 
     def get_balances(self) -> dict[str, float]:
         """Returns {coin_id: amount} for all assets in this user's wallet."""
-        conn = sqlite3.connect("cryptodata.sqlite")
+        
         cur = conn.cursor()
         rows = cur.execute(
             "SELECT coin_id, money FROM assets WHERE wallet_id = ?",
@@ -50,7 +50,7 @@ class User:
 
     def get_transaction_history(self) -> list[tuple]:
         """Returns a list of (coin_name, quantity, date, type) for all valid transactions."""
-        conn = sqlite3.connect("cryptodata.sqlite")
+        
         cur = conn.cursor()
         rows = cur.execute(
             "SELECT coin_id, quantity, date, type FROM transactions "
@@ -70,7 +70,7 @@ class User:
         Adds delta to the EUR balance (negative delta = withdrawal).
         Returns False if a withdrawal would exceed the available balance.
         """
-        conn = sqlite3.connect("cryptodata.sqlite")
+        
         cur = conn.cursor()
         current = cur.execute(
             "SELECT money FROM assets WHERE wallet_id = ? AND coin_id = 'EUR'",
@@ -108,7 +108,7 @@ class User:
             self._record_transaction(coin.get_coin_id(), 0, action, valid=False)
             return False
 
-        conn = sqlite3.connect("cryptodata.sqlite")
+        
         cur = conn.cursor()
         eur = cur.execute(
             "SELECT money FROM assets WHERE wallet_id = ? AND coin_id = 'EUR'",
@@ -153,7 +153,7 @@ class User:
     def _record_transaction(self, coin_id: str, quantity: float, action: int, valid: bool) -> None:
         today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
         tx_type = "buy" if action == 1 else "sell"
-        conn = sqlite3.connect("cryptodata.sqlite")
+        
         cur = conn.cursor()
         cur.execute(
             "INSERT INTO transactions (wallet_id, coin_id, quantity, date, valid, type) "
@@ -237,7 +237,7 @@ class User:
         """
         if initial_eur <= 0:
             raise ValueError("Initial EUR balance must be greater than 0.")
-        conn = sqlite3.connect("cryptodata.sqlite")
+        
         cur = conn.cursor()
         coin_ids = [row[0] for row in cur.execute("SELECT coin_id FROM coins").fetchall()]
         cur.execute(

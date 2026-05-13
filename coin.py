@@ -17,8 +17,8 @@ class Coin:
         self._cached_price = price
 
         if coin_name is None and coin_id != "EUR":
-            conn = sqlite3.connect("cryptodata.sqlite")
-            with conn:
+            
+            with sqlite3.connect("cryptodata.sqlite") as conn:
                 row = conn.execute(
                     "SELECT coin_name, coin_img FROM coins WHERE coin_id = ?", (coin_id,)
                 ).fetchone()
@@ -31,8 +31,8 @@ class Coin:
 
     def get_price_history(self) -> dict[str, float]:
         """Returns {date: price} for all available dates."""
-        conn = sqlite3.connect("cryptodata.sqlite")
-        with conn:
+        
+        with sqlite3.connect("cryptodata.sqlite") as conn:
             cur = conn.cursor()
             rows = cur.execute(
                 "SELECT date, price FROM coins_prices WHERE coin_id = ?",
@@ -45,8 +45,8 @@ class Coin:
         if self._cached_price is not None:
             return self._cached_price
             # fallback to DB if not cached
-        conn = sqlite3.connect("cryptodata.sqlite")
-        with conn:
+        
+        with sqlite3.connect("cryptodata.sqlite") as conn:
             return conn.execute(
                 "SELECT price FROM coins_prices "
                 "WHERE coin_id = ? AND date = (SELECT MAX(date) FROM coins_prices WHERE coin_id = ?)",
@@ -57,8 +57,8 @@ class Coin:
         """Returns price change percentage vs. yesterday."""
         today_price = self.get_todays_price()
         yesterday = (datetime.now(timezone.utc) - timedelta(days=1)).strftime("%Y-%m-%d")
-        conn = sqlite3.connect("cryptodata.sqlite")
-        with conn:
+        
+        with sqlite3.connect("cryptodata.sqlite") as conn:
             cur = conn.cursor()
             yesterday_price = cur.execute(
                 "SELECT price FROM coins_prices WHERE coin_id = ? AND date = ?",

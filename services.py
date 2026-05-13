@@ -8,8 +8,8 @@ from user import User
 
 def get_all_coins() -> list[Coin]:
     """Returns a Coin object for every coin in the database."""
-    conn = sqlite3.connect("cryptodata.sqlite")
-    with conn:
+    
+    with sqlite3.connect("cryptodata.sqlite") as conn:
         rows = conn.execute(
             "SELECT c.coin_id, c.coin_name, c.coin_img, cp.price "
             "FROM coins c "
@@ -48,8 +48,8 @@ def get_market_volume(coin: Coin, days_back: int = 364) -> tuple[dict, float, fl
         total_sell_pct: overall sell share across the period
         total_buy_pct:  overall buy share across the period
     """
-    conn = sqlite3.connect("cryptodata.sqlite")
-    with conn:
+    
+    with sqlite3.connect("cryptodata.sqlite") as conn:
         cur = conn.cursor()
 
         buys = cur.execute(

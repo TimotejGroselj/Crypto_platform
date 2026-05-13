@@ -13,7 +13,6 @@ from services import (
 )
 
 check_database()
-update_all_prices()
 coins = get_all_coins()
 
 print("Welcome!")
