@@ -3,11 +3,10 @@ from datetime import datetime, timezone
 
 from market_api import fetch_coin_price_history
 import os
-import subprocess
 from create_tables import *
 from seed_data import *
 
-from services import get_all_coins
+from market_api import SUPPORTED_COINS
 
 
 def _today() -> str:

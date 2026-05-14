@@ -1,5 +1,4 @@
 import sqlite3
-
 from crypto_utils import hash_value
 
 

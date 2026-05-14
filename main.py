@@ -1,5 +1,3 @@
-import os
-import subprocess
 
 from cli_inputs import get_int_input
 from updater import *

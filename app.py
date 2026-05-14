@@ -1,6 +1,5 @@
 import os
 import uuid
-import subprocess
 from bottle import redirect, request, response, route, run, static_file, template
 import json
 import threading
