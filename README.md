@@ -71,7 +71,7 @@ requests
 | `bottle`     | Lahkotno spletno ogrodje za spletni vmesnik           |
 | `requests`   | HTTP klici do zunanjega API-ja za cene kriptovalut    |
 
-> **Opozorilo:** V datoteki `requirements.txt` v repozitoriju je tipkarska napaka — `bycript` namesto `bcrypt`. Če `pip install -r requirements.txt` ne deluje, namesti ročno:
+> Če `pip install -r requirements.txt` ne deluje, namesti ročno:
 > ```bash
 > pip install matplotlib bcrypt bottle requests
 > ```
@@ -172,11 +172,11 @@ Gesla so zgoščena z `bcrypt`. Seje za spletni vmesnik so shranjene v pomnilnik
 
 Platforma uporablja **SQLite** (`cryptodata.sqlite`), ki se samodejno ustvari ob prvem zagonu. Nobena ročna konfiguracija baze ni potrebna. Spodaj je diagram ER, ki prikazuje strukturo tabel.
 
-![ER diagram](er.png)
+![ER diagram](er_diagram_og.png)
 
 ---
 
-## 👥 Avtorji
+## 👥 Avtorja
 
-- [TimotejGroselj]
-- [JakaPerbil]
+- Timotej Groselj
+- Jaka Perbil
