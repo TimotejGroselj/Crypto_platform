@@ -62,6 +62,8 @@ matplotlib
 bcrypt
 bottle
 requests
+pickle
+Pillow
 ```
 
 | Paket        | Namen                                                  |
