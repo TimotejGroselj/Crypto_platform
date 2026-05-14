@@ -96,7 +96,7 @@ cd Crypto_platform
 ```bash
 pip install -r requirements.txt
 # ali v primeru napake:
-pip install matplotlib bcrypt bottle requests
+pip install matplotlib bcrypt bottle requests pickle Pillow
 ```
 
 ### 3. Prvi zagon
