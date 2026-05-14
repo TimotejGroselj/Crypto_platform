@@ -70,10 +70,12 @@ requests
 | `bcrypt`     | Varno zgoščevanje gesel                               |
 | `bottle`     | Lahkotno spletno ogrodje za spletni vmesnik           |
 | `requests`   | HTTP klici do zunanjega API-ja za cene kriptovalut    |
+| `pickle`     | Odpiranje datoteke iz bitov                           |
+| `Pillow`     | Shranjevanje slike kot PIL slika                      |
 
 > Če `pip install -r requirements.txt` ne deluje, namesti ročno:
 > ```bash
-> pip install matplotlib bcrypt bottle requests
+> pip install matplotlib bcrypt bottle requests pickle Pillow
 > ```
 
 ---
